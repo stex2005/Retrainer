@@ -19,7 +19,7 @@ subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 %% Import Data
 
 cd(userpath)
-cd('DataAnalysis/mfile');
+cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
 cd('../SessionData');
@@ -196,9 +196,12 @@ for index_subject = 1:NR_subjects
     %% Plots
     
     title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
-    figure_MT = figure(1); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
+    figure_MT = figure(1); 
+%     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
+    set(gcf,'Name',title_fig);
     title_fig = sprintf('Patient %s: Smoothness',subjects{index_subject}.Name);
-    figure_Smoothness = figure(2); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
+    figure_Smoothness = figure(2); 
+    set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
     title_fig = sprintf('Patient %s: ROM',subjects{index_subject}.Name);
     figure_ROM = figure(3); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
     
