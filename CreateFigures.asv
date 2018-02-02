@@ -8,8 +8,8 @@ NR_subjects = 1;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 % 
 % subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 % subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
@@ -245,11 +245,11 @@ for index_subject = 1:NR_subjects
             % MT
             subplot(2,2,1)
             hold on
-            plot1 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,'ok','MarkerFaceColor','B','MarkerSize',8);
+            plot1 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,marker,'-ok','MarkerFaceColor','B','MarkerSize',9);
             hold on
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD,'B')
             
-            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'ok','MarkerFaceColor','G','MarkerSize',8);
+            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-ok','MarkerFaceColor','G','MarkerSize',9);
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
             
             xlabel('Sessions [#]')
@@ -261,7 +261,7 @@ for index_subject = 1:NR_subjects
             %Success
             subplot(2,2,2)
             
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,'-ok','MarkerFaceColor','B','MarkerSize',8);
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,'o','Color','B')
             hold on
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,zeros(1,NR_sessions),'B')
             
@@ -274,7 +274,7 @@ for index_subject = 1:NR_subjects
             %Smoothness
             subplot(2,2,3)
 
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean,'ok','MarkerFaceColor','B','MarkerSize',8);
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean,marker,'-ok','MarkerFaceColor','B','MarkerSize',9);
             hold on
             errorbar(1:max(size(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean)),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_STD,'B')
             
@@ -300,16 +300,16 @@ for index_subject = 1:NR_subjects
             subplot(2,2,4)
             hold on
             if not(isempty(find(code_angles==1)))
-                plot1 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow_Mean,'ok','MarkerFaceColor','B','MarkerSize',8);
+                plot1 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow_Mean,marker,'MarkerSize',10,'Color','B')
                 errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow_STD,'B')
             end
             if not(isempty(find(code_angles==2)))
-            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE_Mean,'ok','MarkerFaceColor','R','MarkerSize',8);
+            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE_Mean,marker,'MarkerSize',10,'Color','R')
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE_STD,'R')
             end
             if not(isempty(find(code_angles==3)))
-            plot3 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_Mean,'ok','MarkerFaceColor','g','MarkerSize',8);
-            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_STD,'g')
+            plot3 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_Mean,marker,'MarkerSize',10,'Color','K')
+            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR_STD,'K')
             end
             
             xlabel('Sessions [#]')
@@ -378,7 +378,7 @@ for index_subject = 1:NR_subjects
             
             % EMG triggered vs timeout triggered
             subplot(2,1,1)
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean*100,'-ok','MarkerFaceColor','G','MarkerSize',8)
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean*100,'-ok','MarkerFaceColor','G','MarkerSize',7)
             hold on
             
             xlabel('Sessions [#]')
@@ -388,11 +388,11 @@ for index_subject = 1:NR_subjects
             xlim([-1.5 30.5]);
             
             find_1 = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks == 1);
-            plot(find_1,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_1)*100,'ok','MarkerFaceColor','B','MarkerSize',8);
+            plot(find_1,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_1)*100,'ok','MarkerFaceColor','B','MarkerSize',7);
             
             find_2 = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks == 2);
-            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',8);
-            yticks(0:20:100);
+            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',7);
+            
             legend({'No Th > 50','One Th > 50','Both Ths > 50'},'Location','east','Fontsize',8,'FontWeight','normal');          
             
             xt = [-1 -1 -1 ];
@@ -414,16 +414,15 @@ for index_subject = 1:NR_subjects
             
             % Involvement
             subplot(2,1,2)
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean*100,'-ok','MarkerFaceColor','B','MarkerSize',8)
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean*100,'-ok','MarkerFaceColor','B','MarkerSize',7)
             hold on
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean*100,'-ok','MarkerFaceColor','R','MarkerSize',8)
-            yticks(0:20:100);
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean*100,'-ok','MarkerFaceColor','R','MarkerSize',7)
             xlabel('Sessions [#]')
             ylabel('Involvement [%]')
             set(gca,'Fontsize',12,'FontWeight','b')
             ylim([-5 140])
             xlim([-1.5 30.5]);
-            legend({'Real','Computed'},'Location','east','Fontsize',8,'FontWeight','normal');
+            legend({'Involvement Real','New Involvement'},'Location','east','Fontsize',8,'FontWeight','normal');
 
             xt = [-1 -1 ];
             yt = [130 110];
