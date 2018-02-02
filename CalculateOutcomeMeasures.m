@@ -33,7 +33,7 @@ DebugModeIndex = 0;
 %% Load MAT-file containing data structure of one patient
 
 cd(userpath)
-cd('DataAnalysis/mfile');
+cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
 cd('../SessionData');

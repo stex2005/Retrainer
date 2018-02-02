@@ -19,7 +19,7 @@ subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 %% Import Data
 
 cd(userpath)
-cd('DataAnalysis/mfile');
+cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
 cd('../SessionData');
