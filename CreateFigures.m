@@ -10,11 +10,10 @@ NR_subjects = 1;
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-% 
+
 % subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 % subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 % subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-
 
 %% Import Data
 
@@ -24,7 +23,6 @@ currentPath=pwd;
 addpath(currentPath);
 cd('../SessionData');
 addpath(pwd);
-
  
  %% Create Figures and Graphs
 
