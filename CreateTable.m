@@ -4,16 +4,16 @@ ccc
 
 %% Initialization
 
-NR_subjects = 1;
+NR_subjects = 2;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+ subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 
-% subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-% subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 
 
 %% Import Data
@@ -37,7 +37,7 @@ if exist(xlsname, 'file')
     delete(xlsname);
 end
 
-heading = {'Patient','MT first Mean','MT first STD','MT last Mean','MT last STD','Smoothness first Mean','Smoothness first STD','Smoothness last Mean','Smoothness last STD'};
+heading = {'Patient','MT T0 Mean','MT first STD','MT last Mean','MT last STD','Smoothness first Mean','Smoothness first STD','Smoothness last Mean','Smoothness last STD'};
 [STATUS,MESSAGE] = xlswrite(xlsname,heading);
 
 %% For each subject
@@ -62,32 +62,32 @@ for index_subject = 1:NR_subjects
             
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean  = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD   = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first = NaN;
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last  = NaN;
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first = [];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last  = [];
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_session} = NaN;
                                                                                             
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Mean          = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.STD           = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first         = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last          = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first         = [];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last          = [];
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_session} = NaN;
                                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean           = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD            = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first          = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last           = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first          = [];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last           = [];
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_session} = NaN ;
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean           = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.STD            = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first          = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last           = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first          = [];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last           = [];
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_session} = NaN ;
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean                 = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.STD                  = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first                = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last                 = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first                = [];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last                 = [];
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_session} = NaN ;
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean           = nan(1,NR_sessions);
@@ -159,43 +159,54 @@ for index_subject = 1:NR_subjects
     
     %% Tables
     
-    xlsappend(
+    
     
     for index_exe_to_consider = 1:NR_exe_to_consider
-        init = [];
-        last = [];
         index_first = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)),3,'first');
         if not(isempty(index_first))
             for i = 1:max(size(index_first))
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_first(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_first(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_first(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_first(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_first(i)}];
-%             nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_first))
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_first(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_first(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_first(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_first(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_first(i)}];
             end
         end
         index_last = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)),3,'last');
         if not(isempty(index_first))
             
             for i = 1:max(size(index_first))
-                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_last(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_last(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_last(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_last(i)}];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last = [init subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_last(i)}];
+                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_last(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_last(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_last(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_last(i)}];
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last = [subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_last(i)}];
             end
         end
 
-        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p]         = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last)
-        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p] = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last)
-        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p]  = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last)
-        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last)
-        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last)
+        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p]         = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last);
+        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p] = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last);
+        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p]  = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last);
+        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last);
+        [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last);
         
-        
-        
-          
+        xlsappend(xlsname,{ subjects{index_subject}.Name subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first)),')') ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last)),')') ...
+                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first)),')') ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last)),')') ...
+                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first) ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last) ...
+                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first) ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last) ...
+                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first) ...
+                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last) ...
+                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p ...                                                    
+                            });
     end
     
     
