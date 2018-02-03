@@ -8,8 +8,7 @@ NR_subjects = 2;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
- subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 
 subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
@@ -37,20 +36,22 @@ if exist(xlsname, 'file')
     delete(xlsname);
 end
 
-heading = {'Patient','MT T0 Mean','MT first STD','MT last Mean','MT last STD','Smoothness first Mean','Smoothness first STD','Smoothness last Mean','Smoothness last STD'};
+heading = {'Patient','Exercise','Movement Time T0','Movement Time T1','Smoothness T0','Smoothness T1','ROM Elbow T0','ROM Elbow T1','ROM SE T0','ROM SE T1','ROM SR T0','ROM SR T1'};
 [STATUS,MESSAGE] = xlswrite(xlsname,heading);
 
 %% For each subject
 
+% [FileName,PathName]=uigetfile('*.mat');
+[FileName,PathName,FilterIndex] = uigetfile('*.mat','MultiSelect','on');
+NR_subjects=max(size(FileName));
+
 for index_subject = 1:NR_subjects
     
-    [FileName,PathName]=uigetfile('*.mat');
+    
     cd(PathName)
-    load(FileName)
-    subjects{index_subject}.Name = FileName(1:end-25);
-    
-    
-    
+    load(FileName{index_subject})
+    subjects{index_subject}.Name = FileName{index_subject}(1:end-25);
+   
     NR_sessions = max(size(Sessions_Outcomes));
     NR_exe_to_consider = max(size(subjects{index_subject}.exe_to_consider));
     
@@ -197,14 +198,14 @@ for index_subject = 1:NR_subjects
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first)),')') ...
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last)),')') ...
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first) ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last) ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first)),')') ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last)),')') ...
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first) ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last) ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first)),')') ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last)),')') ...
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first) nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first) ...
-                            nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last)  nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last) ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first)),')') ...
+                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last)),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last)),')') ...
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p ...                                                    
                             });
     end
