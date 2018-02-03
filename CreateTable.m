@@ -37,8 +37,8 @@ if exist(xlsname, 'file')
     delete(xlsname);
 end
 
-heading = {'Patient','MT Mean','MT STD'};
-xlswrite(xlsname,heading)
+heading = {'Patient','MT first Mean','MT first STD','MT last Mean','MT last STD','Smoothness first Mean','Smoothness first STD','Smoothness last Mean','Smoothness last STD'};
+[STATUS,MESSAGE] = xlswrite(xlsname,heading);
 
 %% For each subject
 
