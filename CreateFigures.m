@@ -8,9 +8,9 @@ NR_subjects = 1;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-
+% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% 
 % subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 % subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 % subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
@@ -399,8 +399,8 @@ for index_subject = 1:NR_subjects
             plot(find_1,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_1)*100,'ok','MarkerFaceColor','B','MarkerSize',7);
             
             find_2 = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks == 2);
-            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',7);
-            
+            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',8);
+            yticks(0:20:100);
             legend({'No Th > 50','One Th > 50','Both Ths > 50'},'Location','east','Fontsize',8,'FontWeight','normal');          
             
             xt = [-1 -1 -1 ];
