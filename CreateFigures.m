@@ -192,26 +192,14 @@ for index_subject = 1:NR_subjects
     end % end for sessions
 
     %% Plots
-    
-    title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
-    figure_MT = figure(1); 
-%     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    set(gcf,'Name',title_fig);
-    title_fig = sprintf('Patient %s: Smoothness',subjects{index_subject}.Name);
-    figure_Smoothness = figure(2); 
-    set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    title_fig = sprintf('Patient %s: ROM',subjects{index_subject}.Name);
-    figure_ROM = figure(3); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    
+       
     for index_exe_to_consider = 1:NR_exe_to_consider
             
             
             switch subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name
                 case 'get_S1_E1_Name'
                     title_exe='Ant Reach Plane';
-                    code_angles = [ 1 3 ];
-                    marker = '-*';
-                 case 'get_S1_E2_Name'
+                case 'get_S1_E2_Name'
                     title_exe='Ant Reach Space';
                 case 'get_S1_E3_Name'
                     title_exe='Move Obj Plane';
@@ -221,36 +209,24 @@ for index_subject = 1:NR_subjects
                     title_exe='Move Obj Space';
                 case 'get_S1_E6_Name'
                     title_exe='Lateral Elevation';
-                    code_angles = [2];
-                    marker = '-o';
                 case 'get_S1_E7_Name'
                     title_exe='Hand to Mouth';
-                    code_angles = [1];
-                    marker = '-d';
                 case 'get_S1_E8_Name'
                     title_exe='Hand to Mouth Obj';
             end
-            
-            
-            
-            
-            
-            
-            
+                        
             %% Figure 1: MT,Success,Smoothness,ROM
-            
             
             title_fig = sprintf('Exercise %d: %s',index_exe_to_consider,title_exe);
             figure; set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig,'Name',title_fig);
-            figure(1);
             % MT
             subplot(2,2,1)
             hold on
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,marker,'MarkerSize',9,'Color','B');
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,'MarkerSize',9);
             hold on
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD,'B')
             
-            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
+            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'MarkerSize',9,'Color','G');
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
             
             xlabel('Sessions [#]')
