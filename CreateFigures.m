@@ -240,42 +240,41 @@ for index_subject = 1:NR_subjects
             %% Figure 1: MT,Success,Smoothness,ROM
             
             
-%             title_fig = sprintf('Exercise %d: %s',index_exe_to_consider,title_exe);
-%             figure; set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig,'Name',title_fig);
+            title_fig = sprintf('Exercise %d: %s',index_exe_to_consider,title_exe);
+            figure; set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig,'Name',title_fig);
             figure(1);
             % MT
-%             subplot(2,2,1)
+            subplot(2,2,1)
             hold on
             plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,marker,'MarkerSize',9,'Color','B');
             hold on
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD,'B')
             
-%             plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
-%             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
+            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
+            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
             
             xlabel('Sessions [#]')
             ylabel('Exercise duration [s]')
             set(gca,'Fontsize',12,'FontWeight','b')
             xlim([-0.5 30.5])
-%             legend([plot1 plot2],'Computed with detection of end of motion','Computed on total exercise time')
+            legend([plot1 plot2],'Computed with detection of end of motion','Computed on total exercise time')
 
             % Success
-%             subplot(2,2,2)
-%             
-%             plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,'o','Color','B')
-%             hold on
-%             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,zeros(1,NR_sessions),'B')
-%             
-%             xlabel('Sessions [#]')
-%             ylabel('Success Rate [%]')
-%             set(gca,'Fontsize',12,'FontWeight','b')
-%             ylim([-5 105])
-%             xlim([-0.5 28.5])
+            subplot(2,2,2)
+            
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,'o','Color','B')
+            hold on
+            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success,zeros(1,NR_sessions),'B')
+            
+            xlabel('Sessions [#]')
+            ylabel('Success Rate [%]')
+            set(gca,'Fontsize',12,'FontWeight','b')
+            ylim([-5 105])
+            xlim([-0.5 28.5])
             
             % Smoothness
-%             subplot(2,2,3)
+            subplot(2,2,3)
 
-            figure(2);
             hold on
             plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean,marker,'MarkerSize',9,'Color','B');
             hold on
@@ -300,8 +299,8 @@ for index_subject = 1:NR_subjects
                 
             
             % ROM
-%             subplot(2,2,4)
-            figure(3);
+            subplot(2,2,4)
+            
             hold on
             if not(isempty(find(code_angles==1)))
                 plot1 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow_Mean,marker,'MarkerSize',10,'Color','B')
@@ -321,10 +320,10 @@ for index_subject = 1:NR_subjects
             set(gca,'Fontsize',12,'FontWeight','b')
             ylim([-0.5 100.5]);
             xlim([-0.5 28.5]);
-%             leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
-%             leg.FontSize = 8;
-%             leg.Location = 'northeast';
-%             leg.FontWeight = 'normal';
+            leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+            leg.FontSize = 8;
+            leg.Location = 'northeast';
+            leg.FontWeight = 'normal';
             
             
             % Save Figure
