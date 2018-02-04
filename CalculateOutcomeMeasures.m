@@ -777,25 +777,25 @@ for index_session =	1:NR_sessions
                                     if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable2 == 0)
                                         % Single Muscle Trigger
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~=0
-                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a
+                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a;
                                         end
                                     else
                                         % Cross Muscle Trigger
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b ~=0
-                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b
+                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b;
                                         end
                                     end
                                 else
                                     % If only one muscle is defined
                                     if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~=0
-                                        Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a
+                                        Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a;
                                     end
                                     
                                 end
                                 
                                 % Definition of Threshold for Involvement
                                 if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c ~= Threshold_INV(1)% && Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c ~=0
-                                    Threshold_INV(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c
+                                    Threshold_INV(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c;
                                 end
                                 
                                 %%
@@ -911,24 +911,24 @@ for index_session =	1:NR_sessions
                                     if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable1 == 0)
                                         % Single Muscle Trigger
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~=0
-                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a
+                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a;
                                         end
                                     else
                                         % Cross Muscle Trigger
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b ~=0
-                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b
+                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b;
                                         end
                                     end
                                 else
                                     % If only one muscle is defined
                                     if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~=0
-                                        Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a
+                                        Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a;
                                     end
                                 end
                                 
                                 % Definition of Threshold for Involvement
                                 if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~= Threshold_INV(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~=0
-                                    Threshold_INV(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c
+                                    Threshold_INV(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c;
                                 end
                                 
                                 
