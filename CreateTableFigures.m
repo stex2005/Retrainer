@@ -4,12 +4,18 @@ ccc
 
 %% Define exercises for each patient manually
 
+%ANKF-015
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-
+%ANKF-022
 subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+%ANKF-023
+subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{3}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+subjects{3}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+
 
 
 %% Import Data
@@ -33,7 +39,16 @@ if exist(xlsname, 'file')
     delete(xlsname);
 end
 
-heading = {'Patient','Exercise','Movement Time T0','Movement Time T1','Movement Time p-value','Smoothness T0','Smoothness T1','Smoothness p-value','ROM Elbow T0','ROM Elbow T1','ROM Elbow p-value','ROM SE T0','ROM SE T1','ROM SE p-value','ROM SR T0','ROM SR T1','ROM SR p-value','EMG-triggered tasks %','Involved tasks %','Involved tasks % recomputed'};
+heading = { 'Patient','Exercise', ...
+            'Movement Time T0','Movement Time T1','Movement Time p-value', ...
+            'Smoothness T0','Smoothness T1','Smoothness p-value', ...
+            'ROM Elbow T0','ROM Elbow T1','ROM Elbow p-value', ...
+            'ROM SE T0','ROM SE T1','ROM SE p-value', ...
+            'ROM SR T0','ROM SR T1','ROM SR p-value', ...
+            'EMG-triggered tasks %', ...
+            'Involved tasks %', ...
+            'Involved tasks % recomputed', ...
+            'Success rate %' };
 [STATUS,MESSAGE] = xlswrite(xlsname,heading);
 
 %% For each subject
@@ -97,6 +112,8 @@ for index_subject = 1:NR_subjects
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean      = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session} = NaN ;
                 
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success = nan(1,NR_sessions);
+                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles = strings(2,NR_sessions);
                 
                 
@@ -130,6 +147,7 @@ for index_subject = 1:NR_subjects
         for index_exe_to_consider = 1:NR_exe_to_consider
             if not(isnan(index_exe_OK(index_exe_to_consider)))
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT);
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD(index_session)= nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Smoothness);
@@ -155,7 +173,9 @@ for index_subject = 1:NR_subjects
                         size_reshape = size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1));
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session}= reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1);
-                                         
+                                 
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success(index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.success*100;
+                        
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles(:,index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Muscles';                     
             end
         end % end for exe to consider
@@ -164,13 +184,37 @@ for index_subject = 1:NR_subjects
     end % end for sessions
 
     
-    %% Tables
+    
     
     
     
     for index_exe_to_consider = 1:NR_exe_to_consider
         
-        index_all = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)),3,'first');
+        switch subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name
+            case 'get_S1_E1_Name'
+                title_exe='Ant Reach Plane';
+                code_angles = [1 2 3];
+            case 'get_S1_E2_Name'
+                title_exe='Ant Reach Space';
+            case 'get_S1_E3_Name'
+                title_exe='Move Obj Plane';
+            case 'get_S1_E4_Name'
+                title_exe='Move Obj Plane in Space';
+            case 'get_S1_E5_Name'
+                title_exe='Move Obj Space';
+            case 'get_S1_E6_Name'
+                title_exe='Lateral Elevation';
+                code_angles = [2];
+            case 'get_S1_E7_Name'
+                title_exe='Hand to Mouth';
+                code_angles = [1 2 3];
+            case 'get_S1_E8_Name'
+                title_exe='Hand to Mouth Obj';
+        end
+        
+        %% T-Test Statistics
+        
+        index_all = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)));
        
         index_first = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)),3,'first');
         if not(isempty(index_first))
@@ -200,6 +244,8 @@ for index_subject = 1:NR_subjects
         [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last);
         [~,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p]     = ttest2(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last);
         
+        %% Table
+        
         xlsappend(xlsname,{ subjects{index_subject}.Name subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name ...
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),')') ...
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),')') ...
@@ -219,52 +265,48 @@ for index_subject = 1:NR_subjects
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),')') ...
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),')') ...
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),')') ...
+                            strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),')') ...
+
                             });
+                        
+        %% Plots
+
+        title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
+        figure; set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        
+        % MT
+        plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),'ob')
+        hold on
+        errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD(index_all),'Color','B')
+
+        %             plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
+        %             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
+
+        xlabel('Sessions [#]')
+        ylabel('Exercise duration [s]')
+        set(gca,'Fontsize',12,'FontWeight','b')
+        xlim([-0.5 30.5])
+        
     end
-    '%.2f'
+      
     
-    
-    
-    %{
+        
     %% Plots
     
-    title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
-    figure_MT = figure(1); 
+%     title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
+%     figure_MT = figure(1); 
 %     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    set(gcf,'Name',title_fig);
-    title_fig = sprintf('Patient %s: Smoothness',subjects{index_subject}.Name);
-    figure_Smoothness = figure(2); 
-    set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    title_fig = sprintf('Patient %s: ROM',subjects{index_subject}.Name);
-    figure_ROM = figure(3); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    
+%     set(gcf,'Name',title_fig);
+%     title_fig = sprintf('Patient %s: Smoothness',subjects{index_subject}.Name);
+%     figure_Smoothness = figure(2); 
+%     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
+%     title_fig = sprintf('Patient %s: ROM',subjects{index_subject}.Name);
+%     figure_ROM = figure(3); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
+    %{
     for index_exe_to_consider = 1:NR_exe_to_consider
             
             
-            switch subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name
-                case 'get_S1_E1_Name'
-                    title_exe='Ant Reach Plane';
-                    code_angles = [ 1 3 ];
-                    marker = '-*';
-                 case 'get_S1_E2_Name'
-                    title_exe='Ant Reach Space';
-                case 'get_S1_E3_Name'
-                    title_exe='Move Obj Plane';
-                case 'get_S1_E4_Name' 
-                    title_exe='Move Obj Plane in Space';
-                case 'get_S1_E5_Name'
-                    title_exe='Move Obj Space';
-                case 'get_S1_E6_Name'
-                    title_exe='Lateral Elevation';
-                    code_angles = [2];
-                    marker = '-o';
-                case 'get_S1_E7_Name'
-                    title_exe='Hand to Mouth';
-                    code_angles = [1];
-                    marker = '-d';
-                case 'get_S1_E8_Name'
-                    title_exe='Hand to Mouth Obj';
-            end
+            
             
             
             
@@ -275,23 +317,7 @@ for index_subject = 1:NR_subjects
             %% Figure 1: MT,Success,Smoothness,ROM
             
             
-%             title_fig = sprintf('Exercise %d: %s',index_exe_to_consider,title_exe);
-%             figure; set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig,'Name',title_fig);
-            figure(1);
-            % MT
-%             subplot(2,2,1)
-            hold on
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,marker,'MarkerSize',9,'Color','B');
-            hold on
-            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD,'B')
             
-%             plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
-%             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
-            
-            xlabel('Sessions [#]')
-            ylabel('Exercise duration [s]')
-            set(gca,'Fontsize',12,'FontWeight','b')
-            xlim([-0.5 30.5])
 %             legend([plot1 plot2],'Computed with detection of end of motion','Computed on total exercise time')
 
             % Success
@@ -309,7 +335,7 @@ for index_subject = 1:NR_subjects
             
             % Smoothness
 %             subplot(2,2,3)
-
+%{
             figure(2);
             hold on
             plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean,marker,'MarkerSize',9,'Color','B');
@@ -490,7 +516,7 @@ for index_subject = 1:NR_subjects
            
             
             
-            
+        %}    
         end
     %}
 end
