@@ -6,15 +6,28 @@ ccc
 
 %ANKF-015
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 %ANKF-022
 subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 %ANKF-023
 subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{3}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{3}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+%VB-010
+subjects{4}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{4}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+%VB-011
+subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+%VB-020
+subjects{6}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{6}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+%VB-023
+subjects{7}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+%VB-028
+subjects{8}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{8}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+
+
 
 
 
@@ -39,7 +52,7 @@ if exist(xlsname, 'file')
     delete(xlsname);
 end
 
-heading = { 'Patient','Exercise', ...
+heading = { 'Patient','Exercise','# Sessions', ...
             'Movement Time T0','Movement Time T1','Movement Time p-value', ...
             'Smoothness T0','Smoothness T1','Smoothness p-value', ...
             'ROM Elbow T0','ROM Elbow T1','ROM Elbow p-value', ...
@@ -151,15 +164,19 @@ for index_subject = 1:NR_subjects
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Smoothness);
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.STD(index_session)= nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Smoothness);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Smoothness;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_elbow);
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD(index_session)= nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_elbow);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_elbow;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SE);
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.STD(index_session)= nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SE);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SE;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SR);
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.STD(index_session)= nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SR);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Array{index_session}= Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.ROM_SR;
                         
                         size_reshape = size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.EMGtriggered);
@@ -194,6 +211,7 @@ for index_subject = 1:NR_subjects
             case 'get_S1_E1_Name'
                 title_exe='Ant Reach Plane';
                 code_angles = [1 2 3];
+                MT_yrange = [0 80];
             case 'get_S1_E2_Name'
                 title_exe='Ant Reach Space';
             case 'get_S1_E3_Name'
@@ -205,9 +223,11 @@ for index_subject = 1:NR_subjects
             case 'get_S1_E6_Name'
                 title_exe='Lateral Elevation';
                 code_angles = [2];
+                MT_yrange = [0 30];
             case 'get_S1_E7_Name'
                 title_exe='Hand to Mouth';
-                code_angles = [1 2 3];
+                code_angles = [1 2];
+                MT_yrange = [0 30];
             case 'get_S1_E8_Name'
                 title_exe='Hand to Mouth Obj';
         end
@@ -246,7 +266,7 @@ for index_subject = 1:NR_subjects
         
         %% Table
         
-        xlsappend(xlsname,{ subjects{index_subject}.Name subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name ...
+        xlsappend(xlsname,{ subjects{index_subject}.Name subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name, max(size(index_all)) ...
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),')') ...
                             strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),')') ...
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p ...
@@ -267,17 +287,20 @@ for index_subject = 1:NR_subjects
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),')') ...
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),')') ...
 
-                            });
+                            });   
                         
-        %% Plots
+       %% Plots
 
         title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
-        figure; set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        
         
         % MT
-        plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),'ob')
+%         subplot(1,3,1)
+        figure
+        plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),'ok','MarkerFaceColor','k','MarkerSize',7)
         hold on
-        errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD(index_all),'Color','B')
+        errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD(index_all),'Color','k')
 
         %             plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'-o','Color','G');
         %             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
@@ -285,9 +308,72 @@ for index_subject = 1:NR_subjects
         xlabel('Sessions [#]')
         ylabel('Exercise duration [s]')
         set(gca,'Fontsize',12,'FontWeight','b')
-        xlim([-0.5 30.5])
+        xlim([-0.5 28.5])
+        ylim(MT_yrange);
+        title_fig = sprintf('%s - %s - MT',subjects{index_subject}.Name,title_exe);
+        set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        print(gcf, '-dtiffn', title_fig)
+        
+        % Smoothness
+        figure
+%         subplot(1,3,2)
+        plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Mean(index_all),'ok','MarkerFaceColor','k','MarkerSize',7)
+        hold on
+        errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.STD(index_all),'Color','k')
+        
+        %{
+            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_elbow_Mean,'o','Color','B')
+            hold on
+            errorbar(1:max(size(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_elbow_Mean)),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_elbow_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_elbow_STD,'B')
+            plot3 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SE_Mean,'o','Color','R')
+            errorbar(1:max(size(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SE_Mean)),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SE_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SE_STD,'R')
+            plot4 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SR_Mean,'o','Color','K')
+            errorbar(1:max(size(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SR_Mean)),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SR_Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_SR_STD,'K')
+        %}
+        
+        xlabel('Sessions [#]')
+        ylabel('Smoothness [a.u]')
+        set(gca,'Fontsize',12,'FontWeight','b')
+        ylim([-0.05 1.05]);
+        xlim([-0.5 28.5]);
+        title_fig = sprintf('%s - %s - Smoothness',subjects{index_subject}.Name,title_exe);
+        set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        print(gcf, '-dtiffn', title_fig)
+        
+        % ROM
+        figure;
+        hold on
+        if not(isempty(find(code_angles==1)))
+            plot1 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),'-ok','MarkerFaceColor','k','MarkerSize',7)
+            errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD(index_all),'k')
+        end
+        if not(isempty(find(code_angles==2)))
+            plot2 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),'-dk','MarkerFaceColor','k','MarkerSize',7)
+            errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.STD(index_all),'k')
+        end
+        if not(isempty(find(code_angles==3)))
+            plot3 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_all),'-*k','MarkerFaceColor','k','MarkerSize',7)
+            errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.STD(index_all),'K')
+        end
+        
+        xlabel('Sessions [#]')
+        ylabel('ROM [°]')
+        set(gca,'Fontsize',12,'FontWeight','b')
+        ylim([-0.5 100.5]);
+        xlim([-0.5 28.5]);
+        leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+        leg.FontSize = 8;
+        leg.Location = 'northeast';
+        leg.FontWeight = 'normal';
+        title_fig = sprintf('%s - %s - ROMs',subjects{index_subject}.Name,title_exe);
+        set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+        print(gcf, '-dtiffn', title_fig)
+        
         
     end
+end
+    
+    
       
     
         
@@ -518,10 +604,10 @@ for index_subject = 1:NR_subjects
             
         %}    
         end
-    %}
+   
 end
 
     
-
+ %}
 
 
