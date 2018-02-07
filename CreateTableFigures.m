@@ -13,6 +13,7 @@ subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{3}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{3}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+subjects{3}.exe_to_consider{4}.Name = 'get_S1_E5_Name';
 %VB-010
 subjects{4}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
 subjects{4}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
@@ -220,6 +221,8 @@ for index_subject = 1:NR_subjects
                 title_exe='Move Obj Plane in Space';
             case 'get_S1_E5_Name'
                 title_exe='Move Obj Space';
+                code_angles = [1 2 3];
+                MT_yrange = [0 100];
             case 'get_S1_E6_Name'
                 title_exe='Lateral Elevation';
                 code_angles = [2];

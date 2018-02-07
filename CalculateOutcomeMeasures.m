@@ -253,7 +253,7 @@ for index_session =	1:NR_sessions
                         
                         % Max ROM for each section
                         Exercises_Temp{index_exe}.rep{index_rep}.ROM_elbow(index_task_to_consider)= nanmax(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle) - ...
-                            nanmin(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle);
+                           nanmin(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle);
                         Exercises_Temp{index_exe}.rep{index_rep}.ROM_SE(index_task_to_consider)   = nanmax(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle) - ...
                             nanmin(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle);
                         Exercises_Temp{index_exe}.rep{index_rep}.ROM_SR(index_task_to_consider)   = nanmax(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle) - ...
@@ -808,7 +808,7 @@ for index_session =	1:NR_sessions
                                     Exercises_Temp{index_exe}.stimulated_enabled_tasks=Exercises_Temp{index_exe}.stimulated_enabled_tasks+1;
                                 end
                                 
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1)) % if EMG is somehow triggered
+                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1)) &&  Threshold_EMG(1) < 50       % EMG is somehow triggered & threshold is not too high
                                     %% Trigger Stimulation
                                     NewThreshold_INV(1) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(1:I_I))*1.2;
                                     
@@ -948,7 +948,7 @@ for index_session =	1:NR_sessions
                                 
                                 
                                 
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2)) % if EMG is somehow triggered
+                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2)) &&  Threshold_EMG(2) < 50 % if EMG is somehow triggered
                                     %% Trigger Stimulation
                                     NewThreshold_INV(2) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(1:I_I))*1.2;
                                     
