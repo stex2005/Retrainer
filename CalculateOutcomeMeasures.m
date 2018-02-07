@@ -47,16 +47,17 @@ cd(currentPath)
 
 %% Initialization
 
-threshold_angle     = 3;            % ROM threshold used to compute Smoothness and Index_fine [degrees]
-threshold_velocity  = 5;            % Angular velocity threshold used to compute Index_fine [degrees/sec]
-threshold_velocity_samples = 5;     % # of samples above the "threshold_velocity" used to compute Index_fine
+threshold_angle     = 3;            % ROM threshold used to compute Smoothness and index_end_movement [degrees]
+threshold_velocity  = 5;            % Angular velocity threshold used to compute index_end_movement [degrees/sec]
+threshold_velocity_samples = 5;     % # of samples above the "threshold_velocity" used to compute index_end_movement
 threshold_EMG       = 50;           % if EMG thresholds (1a,1b,1c,2a,2b,2c) are above this limit, section is discarded
 min_number_samples  = 5;
 
 %% Main Program
 
 NR_sessions = max(size(Sessions));
-% NR_sessions = 22;
+
+% NR_sessions = 15;
 
 % Running for each Session
 for index_session =	1:NR_sessions
@@ -214,25 +215,25 @@ for index_session =	1:NR_sessions
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.valid = 0;
                             end
                         else
-                            if (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_angles < mean_samples - 3*std_samples || ...
-                                    Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_angles > mean_samples + 3*std_samples || ...
+                            if (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_angles < mean_samples - 2*std_samples || ...
+                                    Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_angles > mean_samples + 2*std_samples || ...
                                     Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_angles < min_number_samples)
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.valid = 0;
                             end
                         end
-                        %    UNCOMMENT THIS PART TO REMOVE ERRORS - ex. ANKF-006
+                        
+                        %    UNCOMMENT THIS PART TO REMOVE CALIBRATION ERRORS - e.g. ANKF-006
                         
                         if  nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle) > 100 || nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle) > 100 || nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle) > 100
                             
                             Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.valid = 0;
-                        end
-                        
+                        end               
                         
                     end
                 end % end for reps
             end % end for tasks
             
-            clear mean_samples std_samples
+%             clear mean_samples std_samples
             
             %% ROM angles
             
@@ -272,7 +273,7 @@ for index_session =	1:NR_sessions
             %% Smoothness & Index Fine
             
             % Allocate vectors
-            Exercises_Temp{index_exe}.MT   = NaN(1,NR_rep);     % Compute from "StartTask" to "Index_fine"
+            Exercises_Temp{index_exe}.MT   = NaN(1,NR_rep);     % Compute from "StartTask" to "index_end_movement"
             Exercises_Temp{index_exe}.MT2  = NaN(1,NR_rep);     % Compute from "StartTask" to end
             Exercises_Temp{index_exe}.NR_rep_complete = 0;      % Number of reps with all "task_to_consider" available (not valid = 0)
             
@@ -283,10 +284,10 @@ for index_session =	1:NR_sessions
                 Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_elbow         = NaN(1,NR_task_to_consider);
                 Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SE            = NaN(1,NR_task_to_consider);
                 Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SR            = NaN(1,NR_task_to_consider);
-                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow         = NaN(1,NR_task_to_consider);
-                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE            = NaN(1,NR_task_to_consider);
-                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR            = NaN(1,NR_task_to_consider);
-                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine               = NaN(1,NR_task_to_consider);
+                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow         = NaN(1,NR_task_to_consider);
+                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE            = NaN(1,NR_task_to_consider);
+                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR            = NaN(1,NR_task_to_consider);
+                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement               = NaN(1,NR_task_to_consider);
                 
                 
                 for index_task_to_consider = 1:NR_task_to_consider
@@ -415,13 +416,13 @@ for index_session =	1:NR_sessions
                         % otherwise outcomes are not representative of the
                         % actual movement.
                         
-                        if Exercises_Temp{index_exe}.rep{index_rep}.ROM_elbow(index_task_to_consider) > threshold_angle
+                        
                             
                             % Compute velocity of the elbow [degrees/sec]
                             vel_elbow=diff(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle)./40;
                             vel_elbow=vel_elbow.*1000;
                             
-                            % Compute "Index_fine" as the last instant when the
+                            % Compute "index_end_movement" as the last instant when the
                             % angular velocity is above "threshold_velocity"
                             % for "threshold_velocity_samples" amount of times.
                             
@@ -432,30 +433,31 @@ for index_session =	1:NR_sessions
                             c=c(1:find(c>threshold_velocity_samples,1,'last'));
                             d=sum(c);      %endpoints of the sequences
                             if d ~= 0
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider)=ii_mov(d);
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider)=ii_mov(d);
                             else
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle));
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle));
                             end
                             clear a b c d ii_mov
                             
                             % Compute Smoothness as mean velocity/ max velocity
-                            % from "StartTask" to "Index_fine"
-                            vel_elbow = vel_elbow(1:Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider)-1);
-                            Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_elbow(index_task_to_consider) = abs(nanmean(vel_elbow) / nanmax(abs(vel_elbow)));
-                            
+                            % from "StartTask" to "index_end_movement"
+                            vel_elbow = vel_elbow(1:Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider)-1);
                             if DebugMode
                                 figure
                                 plot(abs(vel_elbow))
                                 hold on
                                 plot(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle)
                                 hline(threshold_velocity,'R');
-                                plot(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider)),'*r');
+                                plot(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider)),'*r');
                             end
+                        
+                        if Exercises_Temp{index_exe}.rep{index_rep}.ROM_elbow(index_task_to_consider) > threshold_angle
+                            Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_elbow(index_task_to_consider) = abs(nanmean(vel_elbow) / nanmax(abs(vel_elbow))); 
                         end
                         
                         %% Compute Smoothness & Index Fine - SE
                         
-                        if Exercises_Temp{index_exe}.rep{index_rep}.ROM_SE(index_task_to_consider) > threshold_angle
+                        
                             
                             vel_SE=diff(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle)./40;
                             vel_SE=vel_SE.*1000; %degrees/s
@@ -467,28 +469,29 @@ for index_session =	1:NR_sessions
                             c=c(1:find(c>threshold_velocity_samples,1,'last'));
                             d=sum(c);      %endpoints of the sequences
                             if d ~= 0
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider)=ii_mov(d);
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider)=ii_mov(d);
                             else
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle));
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle));
                             end
                             clear a b c d ii_mov
                             
-                            vel_SE = vel_SE(1:Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider)-1);
-                            Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SE(index_task_to_consider) = abs(nanmean(vel_SE) / nanmax(abs(vel_SE)));
-                            
+                            vel_SE = vel_SE(1:Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider)-1);
                             if DebugMode
                                 figure
                                 plot(abs(vel_SE))
                                 hold on
                                 plot(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle)
                                 hline(threshold_velocity,'R');
-                                plot(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider)),'*r');
+                                plot(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider)),'*r');
                             end
-                        end
-                        
-                        %% Compute Smoothness & Index Fine - SR
-                        
-                        if Exercises_Temp{index_exe}.rep{index_rep}.ROM_SR(index_task_to_consider) > threshold_angle
+                            
+                            if Exercises_Temp{index_exe}.rep{index_rep}.ROM_SE(index_task_to_consider) > threshold_angle
+                                Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SE(index_task_to_consider) = abs(nanmean(vel_SE) / nanmax(abs(vel_SE)));
+                            end
+                            
+                            %% Compute Smoothness & Index Fine - SR
+                            
+                            
                             
                             %vel_SR=diff(S1exercise_Temp_2{n}.Task{t}.rep{r}.SRAngle)./diff(S1exercise_Temp_2{n}.Task{t}.rep{r}.time_ang);
                             vel_SR=diff(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle)./40;
@@ -501,36 +504,38 @@ for index_session =	1:NR_sessions
                             c=c(1:find(c>threshold_velocity_samples,1,'last'));
                             d=sum(c);      %endpoints of the sequences
                             if d ~= 0
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider)=ii_mov(d);
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider)=ii_mov(d);
                             else
-                                Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle));
+                                Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider)=max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle));
                             end
                             clear a b c d ii_mov
                             
-                            vel_SR = vel_SR(1:Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider)-1);
-                            Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SR(index_task_to_consider) = abs(nanmean(vel_SR) / nanmax(abs(vel_SR)));
-                            
+                            vel_SR = vel_SR(1:Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider)-1);
                             if DebugMode
                                 figure
                                 plot(abs(vel_SR))
                                 hold on
                                 plot(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle)
                                 hline(threshold_velocity,'R');
-                                plot(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider)),'*r');
+                                plot(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider)),'*r');
                             end
-                        end
+                            
+                            
+                            if Exercises_Temp{index_exe}.rep{index_rep}.ROM_SR(index_task_to_consider) > threshold_angle
+                                Exercises_Temp{index_exe}.rep{index_rep}.Smoothness_SR(index_task_to_consider) = abs(nanmean(vel_SR) / nanmax(abs(vel_SR)));
+                            end
                         
-                        Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) = max([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_elbow(index_task_to_consider), ...
-                            Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SE(index_task_to_consider), ...
-                            Exercises_Temp{index_exe}.rep{index_rep}.Index_fine_SR(index_task_to_consider)]);
+                        Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider) = max([Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_elbow(index_task_to_consider), ...
+                            Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SE(index_task_to_consider), ...
+                            Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement_SR(index_task_to_consider)]);
                         
                         
                         %% Compute MT
                         
-                        if(isnan(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)))
+                        if(isnan(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)))
                             Exercises_Temp{index_exe}.rep{index_rep}.MT(index_task_to_consider) = NaN;
                         else
-                            Exercises_Temp{index_exe}.rep{index_rep}.MT(index_task_to_consider) = (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)) - ...
+                            Exercises_Temp{index_exe}.rep{index_rep}.MT(index_task_to_consider) = (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)) - ...
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))/1000; %seconds
                         end
                         
@@ -555,6 +560,8 @@ for index_session =	1:NR_sessions
                 
                 if Exercises_Temp{index_exe}.Parameters.Name == 'get_S1_E6_Name'
                     Exercises_Temp{index_exe}.Smoothness(index_rep) = Exercises_Temp{index_exe}.Smoothness_SE(index_rep);
+                elseif Exercises_Temp{index_exe}.Parameters.Name == 'get_S1_E7_Name'
+                    Exercises_Temp{index_exe}.Smoothness(index_rep) = nanmean([  Exercises_Temp{index_exe}.Smoothness_elbow(index_rep)     Exercises_Temp{index_exe}.Smoothness_SE(index_rep)]);
                 else
                     Exercises_Temp{index_exe}.Smoothness(index_rep) = nanmean([  Exercises_Temp{index_exe}.Smoothness_elbow(index_rep)     Exercises_Temp{index_exe}.Smoothness_SE(index_rep)     Exercises_Temp{index_exe}.Smoothness_SR(index_rep)]);
                 end
@@ -673,16 +680,16 @@ for index_session =	1:NR_sessions
                         plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))./1000,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle,'--r')
                         plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))./1000,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle,'--k')
                         
-                        if(isnan(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider))==0)
-                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)) - ...
+                        if(isnan(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider))==0)
+                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)) - ...
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))./1000, ...
-                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)),'*b')
-                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)) - ...
+                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.elbowAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)),'*b')
+                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)) - ...
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))./1000, ...
-                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)),'*r')
-                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)) - ...
+                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SEAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)),'*r')
+                            plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)) - ...
                                 Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(1))./1000, ...
-                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)),'*k')
+                                Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.SRAngle(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)),'*k')
                         end
                     end
                 end % end for reps
@@ -707,20 +714,22 @@ for index_session =	1:NR_sessions
             
             Exercises_Temp{index_exe}.total_enabled_tasks                       = 0;
             Exercises_Temp{index_exe}.stimulated_enabled_tasks                  = 0;
+            Exercises_Temp{index_exe}.used_enabled_tasks                        = 0; % i.e. enabled + stimulated + th < 50
+            
             Exercises_Temp{index_exe}.notstimulated_enabled_tasks               = 0;
             Exercises_Temp{index_exe}.highthreshold_100_enabled_tasks           = 0;
             Exercises_Temp{index_exe}.highthreshold_50_enabled_tasks            = 0;
             Exercises_Temp{index_exe}.highthreshold_enabled_tasks               = [ NaN NaN ]; % One for each muscle
             
             Exercises_Temp{index_exe}.zerothreshold_enabled_tasks               = 0;
-            Exercises_Temp{index_exe}.used_enabled_tasks                        = 0;
+            
             Exercises_Temp{index_exe}.Inv_enabled_tasks                         = 0;
             Exercises_Temp{index_exe}.NewInv_enabled_tasks                      = 0;
             Exercises_Temp{index_exe}.tasktime_1_enabled_tasks                  = 0;
             
             
-            Threshold_EMG = [ NaN NaN ] ; %TODO
-            Threshold_INV = [ NaN NaN ] ; %TODO
+            Threshold_EMG = [ NaN NaN ] ; 
+            Threshold_INV = [ NaN NaN ] ; 
             
             for index_rep = 1:NR_rep
                 
@@ -758,31 +767,34 @@ for index_session =	1:NR_sessions
                     end
                     
                     
-                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.valid == 1 && Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min > 1  % If the section is valid and #samples is not too low
+                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.valid == 1  && Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min > 1  % If the section is valid and #samples is not too low
                         
                         timeEMG_plot  = (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG(1))./1000;   % Time normalization vectors
                         timeI_plot    = (Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeI - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeI(1))./1000;
                         
-                        
-                        %% EMG 1
+                        %% ******************************* EMG 1 ********************************************* 
                         
                         if (isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'EMG1') && isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'I1') && not(isempty(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a)))
                             
                             %Define EMG 1 Threshold according to enable
-                            if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable1 == 1)
+                            if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable1 == 1
+                                
+                                % Count total "enabled" tasks in which
+                                % stimulation is possible
                                 Exercises_Temp{index_exe}.total_enabled_tasks=Exercises_Temp{index_exe}.total_enabled_tasks+1;
                                 
                                 % Definition of the Thresholds for EMG trigger
                                 if isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'Enable2')
-                                    if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable2 == 0)
-                                        % Single Muscle Trigger
-                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~=0
-                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a;
+                                    
+                                    %Cross Muscle Trigger
+                                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable2 == 1
+                                        if min(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b) ~= Threshold_EMG(1)
+                                            Threshold_EMG(1) = min(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b);
                                         end
+                                    % Single Muscle Trigger
                                     else
-                                        % Cross Muscle Trigger
-                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b ~=0
-                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b;
+                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1b ~=0
+                                            Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a;
                                         end
                                     end
                                 else
@@ -798,28 +810,36 @@ for index_session =	1:NR_sessions
                                     Threshold_INV(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c;
                                 end
                                 
-                                %%
+                                % Parameters computation
                                 
                                 I_EMG = [];
-                                I_I   = find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I1==0,1,'last');
+                                index_I = [];
+                                index_EMG = [];
+                                index_I   = find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I1==0,1,'last');
+                                if isempty(index_I)
+                                    index_I = 1;
+                                end
                                 
-                                % if EMG is somehow triggered
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1))
+                                    [~,index_EMG] = min(abs(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeI(index_I)));
+                               
+                                
+                                % Count tasks where muscle 1 is stimulated
+                                if index_EMG < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1))
                                     Exercises_Temp{index_exe}.stimulated_enabled_tasks=Exercises_Temp{index_exe}.stimulated_enabled_tasks+1;
                                 end
                                 
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1)) &&  Threshold_EMG(1) < 50       % EMG is somehow triggered & threshold is not too high
-                                    %% Trigger Stimulation
-                                    NewThreshold_INV(1) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(1:I_I))*1.2;
+                                if index_EMG < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1)) &&  Threshold_EMG(1) < 50       % EMG is somehow triggered & threshold is not too high
                                     
                                     Exercises_Temp{index_exe}.used_enabled_tasks         = Exercises_Temp{index_exe}.used_enabled_tasks+1;
+                                    
+                                    NewThreshold_INV(1) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(1:index_EMG))*1.2;
+                                                                        
                                     if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime == 1
                                         Exercises_Temp{index_exe}.tasktime_1_enabled_tasks   = Exercises_Temp{index_exe}.tasktime_1_enabled_tasks+1;
                                     end
                                     
-                                    
-                                    I_EMG=find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(1:min([I_I,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))>Threshold_EMG(1))';
-                                    if (timeI_plot(I_I) > Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime && CheckMaxConsecutive(I_EMG) < 3)
+                                    I_EMG=find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(1:index_EMG)>Threshold_EMG(1))';
+                                    if (timeI_plot(index_I) == Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime && CheckMaxConsecutive(I_EMG) < 3)
                                         Exercises_Temp{index_exe}.rep{index_rep}.EMG1triggered(index_task_to_consider) = 0;
                                         if DebugModeInv
                                             disp('Timeout Triggered');
@@ -833,54 +853,60 @@ for index_session =	1:NR_sessions
                                     end
                                     
                                     
-                                    %% Involvement
+                                    % Involvement
                                     
-                                    if not(isnan(nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min])))))
+                                    [~,index_end_movement_EMG] = min(abs(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider))));
+                                    
+%                                     if not(isnan(nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(index_EMG:index_end_movement_EMG))))
                                         
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c < 50
                                             Exercises_Temp{index_exe}.Inv_enabled_tasks = Exercises_Temp{index_exe}.Inv_enabled_tasks+1;
-                                            if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > Threshold_INV(1)
+                                            
+                                            if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(index_EMG:index_end_movement_EMG)) > Threshold_INV(1)
                                                 Exercises_Temp{index_exe}.rep{index_rep}.Involvement1(index_task_to_consider) = 1;
+                                                if DebugModeInv
+                                                    disp('Involvement');
+                                                end
                                             else
                                                 Exercises_Temp{index_exe}.rep{index_rep}.Involvement1(index_task_to_consider) = 0;
+                                                if DebugModeInv
+                                                    disp('Not Involvement')
+                                                end
                                             end
                                         end
                                         
                                         Exercises_Temp{index_exe}.NewInv_enabled_tasks = Exercises_Temp{index_exe}.NewInv_enabled_tasks+1;
-                                        if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > NewThreshold_INV(1)
+                                        if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(index_I:min([Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > NewThreshold_INV(1)
                                             Exercises_Temp{index_exe}.rep{index_rep}.NewInvolvement1(index_task_to_consider) = 1;
-                                            if DebugModeInv
-                                                disp('Involvement');
-                                            end
+                                            
                                         else
                                             Exercises_Temp{index_exe}.rep{index_rep}.NewInvolvement1(index_task_to_consider) = 0;
-                                            if DebugModeInv
-                                                disp('Not Involvement')
-                                            end
+                                            
                                         end
-                                    else
-                                        if DebugModeInv
-                                            disp('Not Triggered')
-                                        end
+%                                     else
+%                                         if DebugModeInv
+%                                             disp('Not Triggered')
+%                                         end
+%                                     end
+                                    
+                                    
+                                else
+                                    if DebugModeInv
+                                        disp('Not Triggered')
                                     end
-                                    
-                                    
                                 end
-                                %%
-                                
                                 if DebugModeInv
                                     title_fig = sprintf('EMG & Current - Exe %d - Session %d - Task %d - Rep %d - EMG 1',index_exe,index_session,index_task,index_rep);
                                     figure('Name',title_fig);
-                                    plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG(1))./1000,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1);
+                                    plot(timeEMG_plot,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1);
                                     hold on
                                     plot(timeI_plot,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I1);
-                                    %plot(timeEMG_plot(I_EMG),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(I_EMG),'o');
+                                    plot(timeEMG_plot(I_EMG),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG1(I_EMG),'o');
                                     hline(Threshold_EMG(1),'R');
                                     hline(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1c,'B');
-                                    if not(isnan(I_I))
-                                        vline(timeI_plot(I_I),'K')
-                                        vline(timeI_plot(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)),'K');
-                                    end
+                                                                            vline(timeI_plot(index_I),'K')
+                                        vline(timeI_plot(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)),'G');
+                                    
                                 end
                                 
                                 % Thresholds
@@ -898,67 +924,77 @@ for index_session =	1:NR_sessions
                             end % end if enables
                             
                         end % end if Muscle 1 is used
-                        %% EMG 2
+                        
+                        %% ******************************* EMG 2 ********************************************* 
                         
                         if (isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'EMG2') && isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'I2') && not(isempty(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a)))
                             
                             %Define EMG 2 Threshold according to enable
                             if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable2 == 1)
+                                
+                                % Count total "enabled" tasks in which
+                                % stimulation is possible
                                 Exercises_Temp{index_exe}.total_enabled_tasks=Exercises_Temp{index_exe}.total_enabled_tasks+1;
                                 
                                 % Definition of the Thresholds for EMG trigger
-                                if isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'Enable2')
-                                    if(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable1 == 0)
-                                        % Single Muscle Trigger
-                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~=0
-                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a;
+                                if isfield(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task},'Enable1')
+                                    
+                                    %Cross Muscle Trigger
+                                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.Enable1 == 1
+                                        if min(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b) ~= Threshold_EMG(2)
+                                            Threshold_EMG(2) = min(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b);
                                         end
+                                    % Single Muscle Trigger
                                     else
-                                        % Cross Muscle Trigger
-                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b ~=0
-                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b;
+                                        if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2b ~=0
+                                            Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a;
                                         end
                                     end
                                 else
                                     % If only one muscle is defined
-                                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~= Threshold_EMG(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a ~=0
-                                        Threshold_EMG(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2a;
+                                    if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~= Threshold_EMG(1) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a ~=0
+                                        Threshold_EMG(1) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_1a;
                                     end
-                                end
+                                    
+                                end       
                                 
                                 % Definition of Threshold for Involvement
-                                if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~= Threshold_INV(2) %&& Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~=0
+                                if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~= Threshold_INV(2)% && Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c ~=0
                                     Threshold_INV(2) = Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c;
                                 end
                                 
-                                
+                                % Parameters computation
                                 
                                 I_EMG = [];
-                                I_I=find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I2==0,1,'last');
+                                index_I = [];
+                                index_EMG = [];
                                 
+                                index_I = find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I2==0,1,'last');
                                 
-                                
-                                % if EMG is somehow triggered
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2))
-                                    Exercises_Temp{index_exe}.stimulated_enabled_tasks=Exercises_Temp{index_exe}.stimulated_enabled_tasks+1;
-                                else
-                                    Exercises_Temp{index_exe}.notstimulated_enabled_tasks=Exercises_Temp{index_exe}.notstimulated_enabled_tasks+1;
+                                if isempty(index_I)
+                                    index_I = 1;
                                 end
                                 
                                 
+                                [~,index_EMG] = min(abs(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeI(index_I)));
+                        
                                 
+                                % Count tasks where muscle 2 is stimulated
+                                if index_EMG < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2))
+                                    Exercises_Temp{index_exe}.stimulated_enabled_tasks=Exercises_Temp{index_exe}.stimulated_enabled_tasks+1;
+                                end
                                 
-                                if I_I < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2)) &&  Threshold_EMG(2) < 50 % if EMG is somehow triggered
-                                    %% Trigger Stimulation
-                                    NewThreshold_INV(2) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(1:I_I))*1.2;
+                                if index_EMG < max(size(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2)) &&  Threshold_EMG(2) < 50       % EMG is somehow triggered & threshold is not too high
+                                    Exercises_Temp{index_exe}.used_enabled_tasks         = Exercises_Temp{index_exe}.used_enabled_tasks+1;
                                     
-                                    I_EMG=find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(1:min([I_I,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))>Threshold_EMG(2))';
-                                    
+                                    NewThreshold_INV(2) = nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(1:index_EMG))*1.2;
+                                                                        
                                     if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime == 1
                                         Exercises_Temp{index_exe}.tasktime_1_enabled_tasks   = Exercises_Temp{index_exe}.tasktime_1_enabled_tasks+1;
                                     end
                                     
-                                    if (timeI_plot(I_I) > Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime && CheckMaxConsecutive(I_EMG) < 3)
+                                    I_EMG=find(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(1:index_EMG)>Threshold_EMG(2))';
+                                    if (timeI_plot(index_I) == Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.tasktime && CheckMaxConsecutive(I_EMG) < 3)
                                         Exercises_Temp{index_exe}.rep{index_rep}.EMG2triggered(index_task_to_consider) = 0;
                                         if DebugModeInv
                                             disp('Timeout Triggered');
@@ -971,55 +1007,59 @@ for index_session =	1:NR_sessions
                                         end
                                     end
                                     
-                                    %% Involvement
-                                    if not(isnan(nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min])))))
+                                    
+                                    % Involvement
+                                    
+                                    [~,index_end_movement_EMG] = min(abs(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.time_ang(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider))));
+                                    
+%                                     if not(isnan(nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(index_EMG:index_end_movement_EMG))))
                                         
                                         if Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c < 50
-                                            Exercises_Temp{index_exe}.Inv_enabled_tasks         = Exercises_Temp{index_exe}.Inv_enabled_tasks+1;
-                                            if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > Threshold_INV(2)
+                                            Exercises_Temp{index_exe}.Inv_enabled_tasks = Exercises_Temp{index_exe}.Inv_enabled_tasks+1;
+                                            
+                                            if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(index_EMG:index_end_movement_EMG)) > Threshold_INV(2)
                                                 Exercises_Temp{index_exe}.rep{index_rep}.Involvement2(index_task_to_consider) = 1;
+                                                if DebugModeInv
+                                                    disp('Involvement');
+                                                end
                                             else
                                                 Exercises_Temp{index_exe}.rep{index_rep}.Involvement2(index_task_to_consider) = 0;
+                                                if DebugModeInv
+                                                    disp('Involvement');
+                                                end
                                             end
                                         end
                                         
-                                        Exercises_Temp{index_exe}.NewInv_enabled_tasks         = Exercises_Temp{index_exe}.NewInv_enabled_tasks+1;
-                                        if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(I_I:min([Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > NewThreshold_INV(2)
+                                        Exercises_Temp{index_exe}.NewInv_enabled_tasks = Exercises_Temp{index_exe}.NewInv_enabled_tasks+1;
+                                        if nanmean(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(index_I:min([Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider) Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.NR_samples_min]))) > NewThreshold_INV(2)
                                             Exercises_Temp{index_exe}.rep{index_rep}.NewInvolvement2(index_task_to_consider) = 1;
-                                            if DebugModeInv
-                                                disp('Involvement');
-                                            end
+                                            
                                         else
                                             Exercises_Temp{index_exe}.rep{index_rep}.NewInvolvement2(index_task_to_consider) = 0;
-                                            if DebugModeInv
-                                                disp('Not Involvement')
-                                            end
-                                        end
-                                        
-                                    else
+                                        end                                    
+                                    
+                                else
                                         if DebugModeInv
                                             disp('Not Triggered')
                                         end
                                     end
-                                end
-                                
+                                                               
                                 if DebugModeInv
                                     title_fig = sprintf('EMG & Current - Exe %d - Session %d - Task %d - Rep %d - EMG 2',index_exe,index_session,index_task,index_rep);
                                     figure('Name',title_fig);
-                                    plot((Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG - Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.timeEMG(1))./1000,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2);
+                                    plot(timeEMG_plot,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2);
                                     hold on
                                     plot(timeI_plot,Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.I2);
-                                    %plot(timeEMG_plot(I_EMG),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(I_EMG),'o');
-                                    hline(NewThreshold_INV(2));
+                                    plot(timeEMG_plot(I_EMG),Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG2(I_EMG),'o');
                                     hline(Threshold_EMG(2),'R');
                                     hline(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.EMG_2c,'B');
-                                    if not(isnan(I_I))
-                                        vline(timeI_plot(I_I),'K')
-                                        vline(timeI_plot(Exercises_Temp{index_exe}.rep{index_rep}.Index_fine(index_task_to_consider)),'K');
-                                    end
+                                    
+                                        vline(timeI_plot(index_I),'g')
+                                        vline(timeI_plot(Exercises_Temp{index_exe}.rep{index_rep}.index_end_movement(index_task_to_consider)),'r');
+                                   
                                 end
                                 
-                                
+                                % Thresholds
                                 if Threshold_EMG(2) > 100
                                     Exercises_Temp{index_exe}.highthreshold_100_enabled_tasks = Exercises_Temp{index_exe}.highthreshold_100_enabled_tasks+1;
                                 end
@@ -1032,10 +1072,8 @@ for index_session =	1:NR_sessions
                                 end
                                 
                             end % end if enables
+                            
                         end % end if Muscle 2 is used
-                        
-                        
-                        
                         
                     end % end if valids
                     

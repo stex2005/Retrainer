@@ -8,6 +8,8 @@ NR_subjects = 1;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
+% subjects{1}.exe_to_consider{3}.Name = 'get_S1_E3_Name';
 subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 % 
@@ -208,12 +210,14 @@ for index_subject = 1:NR_subjects
             switch subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name
                 case 'get_S1_E1_Name'
                     title_exe='Ant Reach Plane';
-                    code_angles = [ 1 3 ];
-                    marker = '-o';
+                    code_angles = [1 2 3];
+                    MT_yrange = [0 80];
                  case 'get_S1_E2_Name'
                     title_exe='Ant Reach Space';
                 case 'get_S1_E3_Name'
                     title_exe='Move Obj Plane';
+                    code_angles = [ 1 2 3 ];
+                    MT_yrange = [0 80];
                 case 'get_S1_E4_Name' 
                     title_exe='Move Obj Plane in Space';
                 case 'get_S1_E5_Name'
@@ -221,11 +225,11 @@ for index_subject = 1:NR_subjects
                 case 'get_S1_E6_Name'
                     title_exe='Lateral Elevation';
                     code_angles = [2];
-                    marker = '-o';
+                    MT_yrange = [0 20];
                 case 'get_S1_E7_Name'
                     title_exe='Hand to Mouth';
-                    code_angles = [1];
-                    marker = '-o';
+                    code_angles = [1 2];
+                    MT_yrange = [0 25];
                 case 'get_S1_E8_Name'
                     title_exe='Hand to Mouth Obj';
             end
@@ -249,14 +253,15 @@ for index_subject = 1:NR_subjects
             hold on
             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD,'B')
             
-            plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'ok','MarkerFaceColor','G','MarkerSize',8);
-            errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
-            
+%             plot2 = plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,'ok','MarkerFaceColor','G','MarkerSize',8);
+%             errorbar(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD,'G')
+%             
             xlabel('Sessions [#]')
             ylabel('Exercise duration [s]')
-            set(gca,'Fontsize',12,'FontWeight','b')
-            xlim([-0.5 30.5])
-            legend([plot1 plot2],'Computed with detection of end of motion','Computed on total exercise time')
+            set(gca,'Fontsize',14,'FontWeight','b')
+            xlim([-0.5 28.5]);
+            ylim(MT_yrange);
+%             legend([plot1 plot2],'Computed with detection of end of motion','Computed on total exercise time')
 
             %Success
             subplot(2,2,2)
@@ -267,7 +272,7 @@ for index_subject = 1:NR_subjects
             
             xlabel('Sessions [#]')
             ylabel('Success Rate [%]')
-            set(gca,'Fontsize',12,'FontWeight','b')
+            set(gca,'Fontsize',14,'FontWeight','b')
             ylim([-5 105])
             xlim([-0.5 28.5])
             
@@ -290,10 +295,10 @@ for index_subject = 1:NR_subjects
             
             xlabel('Sessions [#]')
             ylabel('Smoothness [a.u]')
-            set(gca,'Fontsize',12,'FontWeight','b')
+            set(gca,'Fontsize',14,'FontWeight','b')
             ylim([-0.05 1.05]);
             xlim([-0.5 28.5]);
-            legend({'Averaged'},'Fontsize',8,'FontWeight','normal')
+%             legend({'Averaged'},'Fontsize',8,'FontWeight','normal')
                 
             
             % ROM
@@ -314,13 +319,13 @@ for index_subject = 1:NR_subjects
             
             xlabel('Sessions [#]')
             ylabel('ROM [°]')
-            set(gca,'Fontsize',12,'FontWeight','b')
+            set(gca,'Fontsize',14,'FontWeight','b')
             ylim([-0.5 100.5]);
             xlim([-0.5 28.5]);
-%             leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
-%             leg.FontSize = 8;
-%             leg.Location = 'northeast';
-%             leg.FontWeight = 'normal';
+            leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+            leg.FontSize = 8;
+            leg.Location = 'northeast';
+            leg.FontWeight = 'normal';
                       
             % Save Figure
             print(gcf, '-dtiffn', strcat(subjects{index_subject}.Name,' ',title_exe,' Outcomes'))
@@ -347,7 +352,7 @@ for index_subject = 1:NR_subjects
             
             xlabel('Sessions [#]')
             ylabel('Metadata [# tasks]')
-            legend({'Enabled','Stimul','100 Thresh','50 Thresh','# 0 Thresh','Used'},'Fontsize',8,'FontWeight','normal');
+            legend({'Enabled','Stimul','100 Thresh','50 Thresh','# 0 Thresh','triggered'},'Fontsize',8,'FontWeight','normal');
             legend('Location','northeast');
             
             xlim([-0.5 30.5]);
@@ -380,66 +385,67 @@ for index_subject = 1:NR_subjects
             
             % EMG triggered vs timeout triggered
             subplot(2,1,1)
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean*100,'-ok','MarkerFaceColor','G','MarkerSize',9)
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean*100,'-ok','MarkerFaceColor','G','MarkerSize',8)
             hold on
             
             xlabel('Sessions [#]')
             ylabel('EMG triggered [%]')
-            set(gca,'Fontsize',12,'FontWeight','b')
-            ylim([-5 160])
-            xlim([-1.5 30.5]);
+            set(gca,'Fontsize',14,'FontWeight','b')
+            ylim([-5 180])
+            xlim([-2.5 28.5]);
             
             find_1 = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks == 1);
-            plot(find_1,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_1)*100,'ok','MarkerFaceColor','B','MarkerSize',9);
+            plot(find_1,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_1)*100,'ok','MarkerFaceColor','B','MarkerSize',8);
             
             find_2 = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks == 2);
-            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',9);
+            plot(find_2,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean(find_2)*100,'ok','MarkerFaceColor','R','MarkerSize',8);
             yticks(0:20:100);
-            legend({'No Th > 50','One Th > 50','Both Ths > 50'},'Location','east','Fontsize',8,'FontWeight','normal');          
+            legend({'Both EMG TH<50','One EMG TH<50'},'Location','southeast','Fontsize',8,'FontWeight','normal');          
             
-            xt = [-1 -1 -1 ];
-            yt = [150 130 110];
-            str = {'# enabled','# stim','# tasktime=1'};
-            text(xt,yt,str,'Fontsize',10,'FontWeight','b','HorizontalAlignment','left');
+            xt = [-2 -2 -2 -2];
+            yt = [170 150 130 110];
+            str = {'# Enabled','# Current>0','# EMG TH<50','# tasktime=1'};
+            text(xt,yt,str,'Fontsize',12,'FontWeight','b','HorizontalAlignment','left');
             
                         
             for index_session = 1:NR_sessions
-                xt = [index_session index_session index_session];
-                yt = [150 130 110];
+                xt = [index_session index_session index_session index_session];
+                yt = [170 150 130 110];
                 str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.total_enabled_tasks(index_session)),...
                        num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.stimulated_enabled_tasks(index_session)),...
+                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks(index_session)),...
                        num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.tasktime_1_enabled_tasks(index_session))};
-                text(xt,yt,str,'Fontsize',10,'FontWeight','n','HorizontalAlignment','center')
+                text(xt,yt,str,'Fontsize',12,'FontWeight','n','HorizontalAlignment','center')
             end
             
             
             
             % Involvement
             subplot(2,1,2)
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean*100,'-ok','MarkerFaceColor','B','MarkerSize',9)
+            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean*100,'-ok','MarkerFaceColor','B','MarkerSize',8)
             hold on
-            plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean*100,'-ok','MarkerFaceColor','R','MarkerSize',9)
+%             plot(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean*100,'-ok','MarkerFaceColor','R','MarkerSize',8)
             yticks(0:20:100);
             xlabel('Sessions [#]')
             ylabel('Involvement [%]')
-            set(gca,'Fontsize',12,'FontWeight','b')
+            set(gca,'Fontsize',14,'FontWeight','b')
             ylim([-5 140])
-            xlim([-1.5 30.5]);
-            legend({'Real','Computed'},'Location','east','Fontsize',8,'FontWeight','normal');
+            xlim([-2.5 28.5]);
+%             legend({'Real','Computed'},'Location','east','Fontsize',8,'FontWeight','normal');
 
-            xt = [-1 -1 ];
+            xt = [-2 -2 ];
             yt = [130 110];
-            str = {'# Inv','# NewInv'};
-            text(xt,yt,str,'Fontsize',10,'FontWeight','b','HorizontalAlignment','left');
+            str = {'# Current>0','# EMG TH<50'};
+            text(xt,yt,str,'Fontsize',12,'FontWeight','b','HorizontalAlignment','left');
             
                         
             for index_session = 1:NR_sessions
                 xt = [index_session index_session];
                 yt = [130 110];
-                str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session)),...
-                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInv_enabled_tasks(index_session))};
+                str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.stimulated_enabled_tasks(index_session)),...
+                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session))};              
                        
-                text(xt,yt,str,'Fontsize',10,'FontWeight','n','HorizontalAlignment','center')
+                text(xt,yt,str,'Fontsize',12,'FontWeight','n','HorizontalAlignment','center')
             end
             
             
