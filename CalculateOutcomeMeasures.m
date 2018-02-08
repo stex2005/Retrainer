@@ -30,7 +30,7 @@ DebugModeInv = 0;
 DebugModeIndex = 0;
 
 
-%% Load MAT-file containing data structure of one patient
+%% Load MAT-files containing data structure 
 
 cd(userpath)
 cd('DataAnalysis/mfile-git-Retrainer');
@@ -39,10 +39,14 @@ addpath(currentPath);
 cd('../SessionData');
 addpath(pwd);
 
-[FileName,PathName]=uigetfile('*.mat');
+% [FileName,PathName]=uigetfile('*.mat');
+[FileName,PathName,FilterIndex] = uigetfile('*.mat','MultiSelect','on');
+NR_subjects=max(size(FileName));
+
+for index_subject = 1:NR_subjects
 
 cd(PathName)
-load(FileName)
+load(FileName{index_subject})
 cd(currentPath)
 
 %% Initialization
@@ -558,7 +562,7 @@ for index_session =	1:NR_sessions
             
             %% Create figures for each task of interest
             
-            
+            %{
             
             title_fig = sprintf('Session %d - Exercise %d',index_session,index_exe);
             figure('Name',title_fig);
@@ -1058,7 +1062,9 @@ end % end for sessions
 
 cd(PathName)
 
-filename=strcat(FileName(1:end-4),'_Outcomes.mat');
+filename=strcat(FileName{index_subject}(1:end-4),'_Outcomes.mat');
 save(filename, 'Sessions_Outcomes')
 
 cd(currentPath)
+
+end

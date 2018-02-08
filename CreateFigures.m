@@ -49,14 +49,7 @@ for index_subject = 1:NR_subjects
         for index_exe_to_consider = 1:NR_exe_to_consider
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD = nan(1,NR_sessions);
-                
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD = nan(1,NR_sessions);
                                
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Outcome = [];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Session = [];
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p = NaN;
-                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success = nan(1,NR_sessions);
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.total_enabled_tasks = nan(1,NR_sessions);
@@ -67,15 +60,11 @@ for index_subject = 1:NR_subjects
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.zerothreshold_enabled_tasks = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.tasktime_1_enabled_tasks = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInv_enabled_tasks = nan(1,NR_sessions);
-
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks = nan(1,NR_sessions);
 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.TH1 = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.TH2 = nan(1,NR_sessions);
-                
-                
-                
+                                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_Mean = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_STD = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness_elbow_Mean = nan(1,NR_sessions);
@@ -95,10 +84,8 @@ for index_subject = 1:NR_subjects
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered_Mean = nan(1,NR_sessions);
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean = nan(1,NR_sessions);
-                
+
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles = strings(2,NR_sessions);
-                
                 
         end  
     end
@@ -130,12 +117,6 @@ for index_subject = 1:NR_subjects
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_session) = nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.STD(index_session)  = nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT);
                         
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.Mean(index_session) = nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT2);
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT2.STD(index_session)  = nanstd(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT2);
-                        
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Outcome       = [ subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Outcome Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT];
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Session       = [ subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Anova_Session index_session*ones(1,max(size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT)))];                     
-                        
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success(index_session)   = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.success*100;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.total_enabled_tasks(index_session)               = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.total_enabled_tasks;
@@ -145,9 +126,7 @@ for index_subject = 1:NR_subjects
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_50_enabled_tasks(index_session)    = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.highthreshold_50_enabled_tasks;
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks(index_session)                = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.used_enabled_tasks;
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.tasktime_1_enabled_tasks(index_session)          = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.tasktime_1_enabled_tasks;
-                        
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session)                 = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Inv_enabled_tasks;
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInv_enabled_tasks(index_session)              = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInv_enabled_tasks;
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session)            = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.inv_used_enabled_tasks;
 
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.highthreshold_enabled_tasks(index_session)       = nansum(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.highthreshold_enabled_tasks);
@@ -186,7 +165,6 @@ for index_subject = 1:NR_subjects
                         size_reshape = size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Involvement);
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement_Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Involvement,size_reshape(1)*size_reshape(2),1));
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement_Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1));
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles(:,index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Muscles';                     
             end
@@ -443,7 +421,7 @@ for index_subject = 1:NR_subjects
                 xt = [index_session index_session];
                 yt = [130 110];
                 str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.stimulated_enabled_tasks(index_session)),...
-                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session))};              
+                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session))};              
                        
                 text(xt,yt,str,'Fontsize',12,'FontWeight','n','HorizontalAlignment','center')
             end

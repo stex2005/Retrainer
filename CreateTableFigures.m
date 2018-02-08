@@ -123,11 +123,8 @@ for index_subject = 1:NR_subjects
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean                 = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Array{index_session} = NaN ;
                 
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean      = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session} = NaN ;
-                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks = nan(1,NR_sessions);
-                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks = nan(1,NR_sessions);
 
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success = nan(1,NR_sessions);
@@ -192,12 +189,9 @@ for index_subject = 1:NR_subjects
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Involvement,size_reshape(1)*size_reshape(2),1));
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Array{index_session}= reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Involvement,size_reshape(1)*size_reshape(2),1);
                         
-                        size_reshape = size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement);
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1));
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session}= reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1);
-                        
+                       
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks(index_session)                = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.used_enabled_tasks;
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session)                 = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Inv_enabled_tasks;
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session)                 = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.inv_used_enabled_tasks;
                                  
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success(index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.success*100;
                         
@@ -294,15 +288,14 @@ for index_subject = 1:NR_subjects
                             subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p ...      
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),')') ...
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),')') ...
-                            strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean),'%.2f'),')') ...
                             strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),')') ...
 
                             });   
                         
        %% Plots
 
-        title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
-        set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
+%         title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
+%         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         
         
         % MT
@@ -354,8 +347,8 @@ for index_subject = 1:NR_subjects
         figure;
         hold on
         if not(isempty(find(code_angles==1)))
-            plot1 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),'-ok','MarkerFaceColor','k','MarkerSize',7)
-            errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD(index_all),'k')
+            plot1 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),'--ok','MarkerFaceColor','w','MarkerSize',7)
+            errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD(index_all),'Color','k','LineStyle','none')
         end
         if not(isempty(find(code_angles==2)))
             plot2 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),'-dk','MarkerFaceColor','k','MarkerSize',7)
@@ -598,8 +591,8 @@ end
             for index_session = 1:NR_sessions
                 xt = [index_session index_session];
                 yt = [130 110];
-                str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session)),...
-                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInv_enabled_tasks(index_session))};
+                str = {num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session)),...
+                       num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Newinv_used_enabled_tasks(index_session))};
                        
                 text(xt,yt,str,'Fontsize',10,'FontWeight','n','HorizontalAlignment','center')
             end
