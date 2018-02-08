@@ -126,6 +126,10 @@ for index_subject = 1:NR_subjects
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean      = nan(1,NR_sessions);
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session} = NaN ;
                 
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks = nan(1,NR_sessions);
+                subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks = nan(1,NR_sessions);
+
+                
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success = nan(1,NR_sessions);
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles = strings(2,NR_sessions);
@@ -191,6 +195,9 @@ for index_subject = 1:NR_subjects
                         size_reshape = size(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement);
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Mean(index_session) = nanmean(reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1));
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.NewInvolvement.Array{index_session}= reshape(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.NewInvolvement,size_reshape(1)*size_reshape(2),1);
+                        
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks(index_session)                = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.used_enabled_tasks;
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Inv_enabled_tasks(index_session)                 = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Inv_enabled_tasks;
                                  
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success(index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.success*100;
                         
