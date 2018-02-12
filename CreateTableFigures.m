@@ -3,30 +3,29 @@
 ccc
 
 %% Define exercises for each patient manually
-
 %ANKF-015
-subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-%ANKF-022
-subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-%ANKF-023
-subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{3}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{3}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-subjects{3}.exe_to_consider{4}.Name = 'get_S1_E5_Name';
+% subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% %ANKF-022
+% subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% %ANKF-023
+% subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{3}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
+% subjects{3}.exe_to_consider{3}.Name = 'get_S1_E5_Name';
+% subjects{3}.exe_to_consider{4}.Name = 'get_S1_E7_Name';
 %VB-010
-subjects{4}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{4}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-%VB-011
-subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+% subjects{4}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{1}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+% subjects{4}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 %VB-020
-subjects{6}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{6}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{2}.exe_to_consider{1}.Name = 'get_S1_E7_Name';
 %VB-023
-subjects{7}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 %VB-028
-subjects{8}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{8}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% subjects{7}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+% subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+
 
 
 
@@ -191,8 +190,8 @@ for index_subject = 1:NR_subjects
                         
                        
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks(index_session)                = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.used_enabled_tasks;
-                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session)                 = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.inv_used_enabled_tasks;
-                                 
+                        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks(index_session)            = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.inv_used_enabled_tasks;
+                        
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success(index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.success*100;
                         
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles(:,index_session) = Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.Muscles';                     
@@ -213,7 +212,7 @@ for index_subject = 1:NR_subjects
             case 'get_S1_E1_Name'
                 title_exe='Ant Reach Plane';
                 code_angles = [1 2 3];
-                MT_yrange = [0 80];
+                MT_yrange = [0 30];
             case 'get_S1_E2_Name'
                 title_exe='Ant Reach Space';
             case 'get_S1_E3_Name'
@@ -226,12 +225,12 @@ for index_subject = 1:NR_subjects
                 MT_yrange = [0 100];
             case 'get_S1_E6_Name'
                 title_exe='Lateral Elevation';
-                code_angles = [2];
-                MT_yrange = [0 30];
+                code_angles = 2;
+                MT_yrange = [0 8];
             case 'get_S1_E7_Name'
                 title_exe='Hand to Mouth';
                 code_angles = [1 2];
-                MT_yrange = [0 30];
+                MT_yrange = [0 8];
             case 'get_S1_E8_Name'
                 title_exe='Hand to Mouth Obj';
         end
@@ -270,26 +269,89 @@ for index_subject = 1:NR_subjects
         
         %% Table
         
-        xlsappend(xlsname,{ subjects{index_subject}.Name subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name, max(size(index_all)) ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.2f'),')') ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.2f'),')') ...
-                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first),'%.2f'),')') ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last),'%.2f'),')') ...
-                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first),'%.2f'),')') ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last),'%.2f'),')') ...
-                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first),'%.2f'),')') ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last),'%.2f'),')') ...
-                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first),'%.2f'),')') ...
-                            strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last),'%.2f'),')') ...
-                            subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p ...      
-                            strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean),'%.2f'),')') ...
-                            strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean),'%.2f'),')') ...
-                            strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.2f'),')') ...
-
+        %Movement Time
+        MT_T0           = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.1f'),')') ;
+        MT_T1           = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.1f'),')') ;
+        if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p >= 0.001
+            MT_p        = num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p,'%.3f');
+        else
+            MT_p        = '< 0.001';
+        end
+        
+        %Smoothness
+        Smoothness_T0   = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.first),'%.2f'),')') ;
+        Smoothness_T1   = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last),'%.2f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.last),'%.2f'),')') ;
+        if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p >= 0.001
+            Smoothness_p        = num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Smoothness.p,'%.3f');
+        else
+            Smoothness_p        = '< 0.001';
+        end
+        
+        %ROM elbow
+        if not(isempty(find(code_angles==1, 1)))
+            ROM_elbow_T0 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.first),'%.1f'),')') ;
+            ROM_elbow_T1 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.last),'%.1f'),')') ;
+            if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p >= 0.001
+                ROM_elbow_p = num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.p,'%.3f');
+            else
+                ROM_elbow_p = '< 0.001';
+            end
+        else
+            ROM_elbow_T0 = 'N.A.';
+            ROM_elbow_T1 = 'N.A.';
+            ROM_elbow_p = 'N.A.';
+        end
+        
+        %ROM SE
+        if not(isempty(find(code_angles==2, 1)))
+            ROM_SE_T0 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.first),'%.1f'),')') ;
+            ROM_SE_T1 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.last),'%.1f'),')') ;
+            if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p >= 0.001
+                ROM_SE_p = num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.p,'%.3f');
+            else
+                ROM_SE_p = '< 0.001';
+            end
+        else
+            ROM_SE_T0 = 'N.A.';
+            ROM_SE_T1 = 'N.A.';
+            ROM_SE_p = 'N.A.';
+        end
+        
+        %ROM SR
+        if not(isempty(find(code_angles==3, 1)))
+            ROM_SR_T0 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.first),'%.1f'),')') ;
+            ROM_SR_T1 = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.last),'%.1f'),')') ;
+            if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p >= 0.001
+                ROM_SR_p = num2str(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.p,'%.3f');
+            else
+                ROM_SR_p = '< 0.001';
+            end
+        else
+            ROM_SR_T0 = 'N.A.';
+            ROM_SR_T1 = 'N.A.';
+            ROM_SR_p = 'N.A.';
+        end
+        
+        %EMG triggered
+        index_EMG = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.used_enabled_tasks > 3);
+        EMGtriggered = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean(index_EMG)*100),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.EMGtriggered.Mean(index_EMG)*100),'%.1f'),')');
+        
+        %Involvement
+        index_INV = find(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.inv_used_enabled_tasks > 3);
+        Involvement = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean(index_INV)*100),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean(index_INV)*100),'%.1f'),')');
+        
+        %Success
+        Success = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),')');
+        
+        xlsappend(xlsname,{ subjects{index_subject}.Name title_exe max(size(index_all)) ...
+                            MT_T0 MT_T1 MT_p ...
+                            Smoothness_T0 Smoothness_T1 Smoothness_p ...
+                            ROM_elbow_T0 ROM_elbow_T1 ROM_elbow_p ...
+                            ROM_SE_T0 ROM_SE_T1 ROM_SE_p ...
+                            ROM_SR_T0 ROM_SR_T1 ROM_SR_p ...
+                            EMGtriggered ...
+                            Involvement ...
+                            Success
                             });   
                         
        %% Plots
@@ -316,6 +378,7 @@ for index_subject = 1:NR_subjects
         title_fig = sprintf('%s - %s - MT',subjects{index_subject}.Name,title_exe);
         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         print(gcf, '-dtiffn', title_fig)
+        savefig(title_fig)
         
         % Smoothness
         figure
@@ -342,21 +405,34 @@ for index_subject = 1:NR_subjects
         title_fig = sprintf('%s - %s - Smoothness',subjects{index_subject}.Name,title_exe);
         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         print(gcf, '-dtiffn', title_fig)
+        savefig(title_fig)
+
         
         % ROM
         figure;
         hold on
-        if not(isempty(find(code_angles==1)))
-            plot1 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),'--ok','MarkerFaceColor','w','MarkerSize',7)
+        if not(isempty(find(code_angles==1, 1)))
+            plot1 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),'--ok','MarkerFaceColor','w','MarkerSize',7);
             errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_elbow.STD(index_all),'Color','k','LineStyle','none')
+            
         end
-        if not(isempty(find(code_angles==2)))
-            plot2 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),'-dk','MarkerFaceColor','k','MarkerSize',7)
+        if not(isempty(find(code_angles==2, 1)))
+            plot2 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),'-dk','MarkerFaceColor','k','MarkerSize',7);
             errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SE.STD(index_all),'k')
+            
         end
-        if not(isempty(find(code_angles==3)))
-            plot3 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_all),'-*k','MarkerFaceColor','k','MarkerSize',7)
+        if not(isempty(find(code_angles==3, 1)))
+            plot3 = plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_all),'-*k','MarkerFaceColor','k','MarkerSize',7);
             errorbar(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.Mean(index_all),subjects{index_subject}.exe_to_consider{index_exe_to_consider}.ROM_SR.STD(index_all),'K')
+            
+        end
+        
+        if not(isempty(find(code_angles==1, 1))) && not(isempty(find(code_angles==2, 1))) && not(isempty(find(code_angles==3, 1)))
+            leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+%         elseif not(isempty(find(code_angles==1, 1))) && not(isempty(find(code_angles==2, 1)))
+%             leg = legend([plot1 plot2],'Elbow','Shoulder Elevation');
+%         elseif not(isempty(find(code_angles==2, 1)))
+%             leg = legend(plot2,'Shoulder Elevation');
         end
         
         xlabel('Sessions [#]')
@@ -364,13 +440,15 @@ for index_subject = 1:NR_subjects
         set(gca,'Fontsize',12,'FontWeight','b')
         ylim([-0.5 100.5]);
         xlim([-0.5 28.5]);
-        leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
-        leg.FontSize = 8;
+%         leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+        leg.FontSize = 12;
         leg.Location = 'northeast';
         leg.FontWeight = 'normal';
         title_fig = sprintf('%s - %s - ROMs',subjects{index_subject}.Name,title_exe);
         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         print(gcf, '-dtiffn', title_fig)
+        savefig(title_fig)
+
         
         
     end
