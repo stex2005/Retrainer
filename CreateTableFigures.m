@@ -4,27 +4,27 @@ ccc
 
 %% Define exercises for each patient manually
 %ANKF-015
-% subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% %ANKF-022
-% subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-% %ANKF-023
-% subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{3}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
-% subjects{3}.exe_to_consider{3}.Name = 'get_S1_E5_Name';
-% subjects{3}.exe_to_consider{4}.Name = 'get_S1_E7_Name';
-%VB-010
-% subjects{4}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{1}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-% subjects{4}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-%VB-020
-% subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{2}.exe_to_consider{1}.Name = 'get_S1_E7_Name';
-%VB-023
+subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+%ANKF-022
+subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+%ANKF-023
 subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{3}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
+subjects{3}.exe_to_consider{3}.Name = 'get_S1_E5_Name';
+subjects{3}.exe_to_consider{4}.Name = 'get_S1_E7_Name';
+% VB-010
+subjects{4}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{4}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+subjects{4}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+% VB-020
+subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{5}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+%VB-023
+subjects{6}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 %VB-028
-% subjects{7}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-% subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+subjects{7}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 
 
 
@@ -238,6 +238,8 @@ for index_subject = 1:NR_subjects
         %% T-Test Statistics
         
         index_all = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)));
+        
+        subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles = subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles(:,index_all);
        
         index_first = find(not(isnan(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean)),3,'first');
         if not(isempty(index_first))
@@ -341,7 +343,7 @@ for index_subject = 1:NR_subjects
         Involvement = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean(index_INV)*100),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Involvement.Mean(index_INV)*100),'%.1f'),')');
         
         %Success
-        Success = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),')');
+        Success = strcat(num2str(nanmedian(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),' (',num2str(iqr(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Success),'%.1f'),')')
         
         xlsappend(xlsname,{ subjects{index_subject}.Name title_exe max(size(index_all)) ...
                             MT_T0 MT_T1 MT_p ...
@@ -355,7 +357,7 @@ for index_subject = 1:NR_subjects
                             });   
                         
        %% Plots
-
+%{
 %         title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
 %         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         
@@ -449,17 +451,21 @@ for index_subject = 1:NR_subjects
         print(gcf, '-dtiffn', title_fig)
         savefig(title_fig)
 
-        
+   %}     
         
     end
 end
+
+filename='Outcomes.mat';
+save(filename, 'subjects')
+
     
     
       
     
         
     %% Plots
-    
+  %{  
 %     title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
 %     figure_MT = figure(1); 
 %     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
@@ -469,7 +475,7 @@ end
 %     set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
 %     title_fig = sprintf('Patient %s: ROM',subjects{index_subject}.Name);
 %     figure_ROM = figure(3); set(gcf, 'Position', get(0, 'Screensize'),'Name',title_fig);
-    %{
+    
     for index_exe_to_consider = 1:NR_exe_to_consider
             
             

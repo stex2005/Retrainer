@@ -48,6 +48,7 @@ for index_subject = 1:NR_subjects
 cd(PathName)
 load(FileName{index_subject})
 cd(currentPath)
+clear Sessions_Outcomes
 
 %% Initialization
 
@@ -171,7 +172,7 @@ for index_session =	1:NR_sessions
                     elseif (strcmp(Exercises_Temp{index_exe}.rep{index_rep}.Task{index_task}.trigger,'nextStep')==1)
                         Exercises_Temp{index_exe}.task_Manual=Exercises_Temp{index_exe}.task_Manual+1;
                     else
-                        Exercises_Temp{index_exe}.task_Manual=Exercises_Temp{index_exe}.task_Error+1;
+                        Exercises_Temp{index_exe}.task_Error=Exercises_Temp{index_exe}.task_Error+1;
                     end
                     Exercises_Temp{index_exe}.total_task=Exercises_Temp{index_exe}.total_task+1;
                 end % end for tasks
@@ -179,8 +180,9 @@ for index_session =	1:NR_sessions
             
             % Discard "task_timer" since they trigger the end of relax phases
             % Compute success rate
-            Exercises_Temp{index_exe}.success = ( Exercises_Temp{index_exe}.task_RFID + Exercises_Temp{index_exe}.task_Angles ) / ( Exercises_Temp{index_exe}.total_task - Exercises_Temp{index_exe}.task_timer );
-            
+       Exercises_Temp{index_exe}.success = ( Exercises_Temp{index_exe}.task_RFID + Exercises_Temp{index_exe}.task_Angles ) / ( Exercises_Temp{index_exe}.total_task - Exercises_Temp{index_exe}.task_timer - Exercises_Temp{index_exe}.task_Error );
+%           Exercises_Temp{index_exe}.success = ( Exercises_Temp{index_exe}.task_Manual)                                        / ( Exercises_Temp{index_exe}.total_task - Exercises_Temp{index_exe}.task_timer - Exercises_Temp{index_exe}.task_Error);
+
             
             %% Compute number of samples for each section
             
@@ -1064,6 +1066,8 @@ cd(PathName)
 
 filename=strcat(FileName{index_subject}(1:end-4),'_Outcomes.mat');
 save(filename, 'Sessions_Outcomes')
+
+
 
 cd(currentPath)
 
