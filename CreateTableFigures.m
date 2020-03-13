@@ -37,7 +37,7 @@ subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 % cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
-cd('../Results Outcome');
+cd('../Results Outcome Data');
 addpath(pwd);
 
  
