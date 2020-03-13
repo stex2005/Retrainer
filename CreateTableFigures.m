@@ -33,11 +33,11 @@ subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 
 %% Import Data
 
-cd(userpath)
-cd('DataAnalysis/mfile-git-Retrainer');
+% cd(userpath)
+% cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
-cd('../SessionData');
+cd('../Results Outcome');
 addpath(pwd);
 
  

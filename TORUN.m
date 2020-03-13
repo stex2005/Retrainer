@@ -1,30 +1,19 @@
-%% Parser
-
-%% CCC
-
+%% inizialization
 clear all
 close all
 clc
 
-%% Import Data
-
-cd(userpath)
-cd('DataAnalysis/mfile');
 currentPath=pwd;
-addpath(currentPath);
-cd('../SessionData');
-addpath(pwd);
-
-[FileName,PathName,FilterIndex] = uigetfile('*.txt','MultiSelect','on');
-NR_sessions=max(size(FileName)); 
-
-%% Initialization
 
 delimiter=' ';
 parse_S1=1;
 parse_RFID=1;
 
-%% Running for each Session
+cd('../S1/RETRAINER')
+
+[FileName,PathName,FilterIndex] = uigetfile('*.txt','MultiSelect','ON');
+
+NR_sessions=max(size(FileName)); 
 
 for index_session=1:NR_sessions
     
@@ -68,9 +57,12 @@ for index_session=1:NR_sessions
     %%
     CreaStructTOP_v3;
     
-    fn=fullfile(PathName,'Results');
+    cd('..'); 
+    PathToSave=pwd; 
+
+    fn=fullfile(PathToSave,'Results');
     if(not(exist(fn,'dir')))
-        mkdir(PathName,'Results');
+        mkdir(PathToSave,'Results');
     end
     
     cd(fn)

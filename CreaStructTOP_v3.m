@@ -128,7 +128,6 @@ for i=1:length(IndexexerciseLine)
         %vettori Tempo per identificare i parametri senza NaN
         
         index_param1=find(not(isnan(EMG_THa(1,:))));
-        index_param2=find(not(isnan(EMG_THa(2,:))));
         
         AbsoluteTime_param_1_nonan=AbsoluteTime_param(index_param1);
         EMG_THa_1=EMG_THa(1,index_param1);
@@ -137,16 +136,19 @@ for i=1:length(IndexexerciseLine)
         I_target_1=I_target(1,index_param1);
         PW_target_1=PW_target(1,index_param1);
         
+        if min(size(EMG_THa))==2
+            index_param2=find(not(isnan(EMG_THa(2,:))));
+            AbsoluteTime_param_2_nonan=AbsoluteTime_param(index_param2);
+            EMG_THa_2=EMG_THa(2,index_param2);
+            EMG_THb_2=EMG_THb(2,index_param2);
+            EMG_THc_2=EMG_THc(2,index_param2);
+            I_target_2=I_target(2,index_param2);
+            PW_target_2=PW_target(2,index_param2);
+        end
         
-        AbsoluteTime_param_2_nonan=AbsoluteTime_param(index_param2);
-        EMG_THa_2=EMG_THa(2,index_param2);
-        EMG_THb_2=EMG_THb(2,index_param2);
-        EMG_THc_2=EMG_THc(2,index_param2);
-        I_target_2=I_target(2,index_param2);
-        PW_target_2=PW_target(2,index_param2);
         
         Name=exercise{IndexexerciseLine(i)};
-              
+        
         switch Name
             case 'get_S1_E1_Name'
                 S1exercise{j}.Parameters.Total_NR_task=12;
@@ -185,7 +187,7 @@ for i=1:length(IndexexerciseLine)
         %         IndexexerciseLine(i)
         Name=exercise{IndexexerciseLine(i)};
         
-      
+        
         
     end
     if (strcmp(exercise{IndexexerciseLine(i)},Name) == 1 && strcmp(exercise{IndexexerciseLine(i)},'get_ExercisesDone') == 0)
@@ -250,26 +252,61 @@ for i=1:length(IndexexerciseLine)
                 
                 %SOGLIE
                 TimeNext=AbsoluteTime(indexNext);
+                TimeInit=AbsoluteTime(index); 
                 
                 find_1=find(AbsoluteTime_param_1_nonan<TimeNext,1, 'last');
-                find_2=find(AbsoluteTime_param_2_nonan<TimeNext,1, 'last');
+                if min(size(EMG_THa))==2
+                    find_2=find(AbsoluteTime_param_2_nonan<TimeNext,1, 'last');
+                end
+                
+                if(AbsoluteTime_param_1_nonan(find_1)<TimeInit)
+                      display("Attenzione soglie M1")
+                      find_1=NaN; 
+                end
+                
+                if min(size(EMG_THa))==2
+                    if(AbsoluteTime_param_1_nonan(find_2)<TimeInit)
+                        display("Attenzione soglie M2")
+                        find_2=NaN;
+                    end
+                end
                 
                 %param muscle 1
-                S1exercise{ex_index}.rep{w}.Task{task_i}.time_param1=AbsoluteTime_param_1_nonan(find_1)*1000;
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1a=EMG_THa_1(find_1);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1b=EMG_THb_1(find_1);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1c=EMG_THc_1(find_1);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_1=I_target_1(find_1);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_1=PW_target_1(find_1);
+                if(not(isnan(find_1)))
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.time_param1=AbsoluteTime_param_1_nonan(find_1)*1000;
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1a=EMG_THa_1(find_1);
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1b=EMG_THb_1(find_1);
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1c=EMG_THc_1(find_1);
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_1=I_target_1(find_1);
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_1=PW_target_1(find_1);
+                else
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.time_param1=[];
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1a=[];
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1b=[];
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_1c=[];
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_1=[];
+                    S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_1=[];
+                end
                 
-                %param muscle 2
-                S1exercise{ex_index}.rep{w}.Task{task_i}.time_param2=AbsoluteTime_param_2_nonan(find_2)*1000;
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2a=EMG_THa_2(find_2);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2b=EMG_THb_2(find_2);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2c=EMG_THc_2(find_2);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_2=I_target_2(find_2);
-                S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_2=PW_target_2(find_2);
                 
+                %param muscle 2 (if exist)
+                if min(size(EMG_THa))==2
+                    if(not(isnan(find_2)))
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.time_param2=AbsoluteTime_param_2_nonan(find_2)*1000;
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2a=EMG_THa_2(find_2);
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2b=EMG_THb_2(find_2);
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2c=EMG_THc_2(find_2);
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_2=I_target_2(find_2);
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_2=PW_target_2(find_2);
+                    else
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.time_param2=[];
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2a=[];
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2b=[];
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.EMG_2c=[];
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.I_max_2=[];
+                        S1exercise{ex_index}.rep{w}.Task{task_i}.PW_max_2=[];
+                    end                
+                end
                 
                 %trigger
                 S1exercise{ex_index}.rep{w}.Task{task_i}.trigger=trigger{index};
@@ -300,7 +337,7 @@ for i=1:length(IndexexerciseLine)
         end
         
     end
-        
+    
     if(strcmp(exercise{IndexexerciseLine(i)},'get_ExercisesDone') == 1)
         Name='';
     end
@@ -314,9 +351,9 @@ for n=1:ex_index
     if(isfield(S1exercise{n},'rep'))
         if(max(size(S1exercise{n}.rep))>3)
             ex_indexOK=ex_indexOK+1;
-            %remove last repetition if not completed 
-            if(size(S1exercise{n}.rep{end}.Task,2)<S1exercise{n}.Parameters.Total_NR_task)               
-                S1exercise{n}.rep=S1exercise{n}.rep(1:end-1);          
+            %remove last repetition if not completed
+            if(size(S1exercise{n}.rep{end}.Task,2)<S1exercise{n}.Parameters.Total_NR_task)
+                S1exercise{n}.rep=S1exercise{n}.rep(1:end-1);
             end
             
             S1exerciseOK{ex_indexOK}=S1exercise{n};
@@ -326,165 +363,178 @@ for n=1:ex_index
     end
 end
 
-
-for j=1:ex_indexOK
-    display('New exe')
-    for r=1:max(size(S1exerciseOK{j}.rep))
-        display('New rep')
-        for n=1:max(size(S1exerciseOK{j}.rep{r}.Task))
-            display(S1exerciseOK{j}.rep{r}.Task{n}.Name)
-            
-            %REMOVE NAN
-            
-            %stream current
-            ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.I1)==0);
-            S1exerciseOK{j}.rep{r}.Task{n}.I1=S1exerciseOK{j}.rep{r}.Task{n}.I1(ID);
-            if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'I2'))
-                S1exerciseOK{j}.rep{r}.Task{n}.I2=S1exerciseOK{j}.rep{r}.Task{n}.I2(ID);
-            end
-            S1exerciseOK{j}.rep{r}.Task{n}.PW1=S1exerciseOK{j}.rep{r}.Task{n}.PW1(ID);
-            if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'PW2'))
-                S1exerciseOK{j}.rep{r}.Task{n}.PW2=S1exerciseOK{j}.rep{r}.Task{n}.PW2(ID);
-            end
-            
-            S1exerciseOK{j}.rep{r}.Task{n}.timeI=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.indexstream_cur=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_cur(ID);
-            
-            %stream EMG
-            clear ID
-            ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.EMG1)==0);
-            S1exerciseOK{j}.rep{r}.Task{n}.EMG1=S1exerciseOK{j}.rep{r}.Task{n}.EMG1(ID);
-            if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'EMG2'))
-                S1exerciseOK{j}.rep{r}.Task{n}.EMG2=S1exerciseOK{j}.rep{r}.Task{n}.EMG2(ID);
-            end
-            
-            S1exerciseOK{j}.rep{r}.Task{n}.timeEMG=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.indexstream_EMG=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_EMG(ID);
-            
-            
-            %stream angle
-            clear ID
-            ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle)==0);
-            S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle=S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.SEAngle=S1exerciseOK{j}.rep{r}.Task{n}.SEAngle(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.SRAngle=S1exerciseOK{j}.rep{r}.Task{n}.SRAngle(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.time_ang=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
-            S1exerciseOK{j}.rep{r}.Task{n}.indexstream_ang=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_ang(ID);
-            
-            
-            %involvement
-            clear ID
-            ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.involvement)==0);
-            if (ID)
-                S1exerciseOK{j}.rep{r}.Task{n}.involvement=S1exerciseOK{j}.rep{r}.Task{n}.involvement(ID);
-                S1exerciseOK{j}.rep{r}.Task{n}.time_inv=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS_inv(ID);
+if(exist('S1exerciseOK'))
+    
+    
+    for j=1:ex_indexOK
+        display('New exe')
+        for r=1:max(size(S1exerciseOK{j}.rep))
+            display('New rep')
+            for n=1:max(size(S1exerciseOK{j}.rep{r}.Task))
+                display(S1exerciseOK{j}.rep{r}.Task{n}.Name)
                 
-            else
-                S1exerciseOK{j}.rep{r}.Task{n}.involvement=NaN;
-                S1exerciseOK{j}.rep{r}.Task{n}.time_inv=NaN;
+                %REMOVE NAN
+                
+                %stream current
+                ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.I1)==0);
+                S1exerciseOK{j}.rep{r}.Task{n}.I1=S1exerciseOK{j}.rep{r}.Task{n}.I1(ID);
+                if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'I2'))
+                    S1exerciseOK{j}.rep{r}.Task{n}.I2=S1exerciseOK{j}.rep{r}.Task{n}.I2(ID);
+                end
+                S1exerciseOK{j}.rep{r}.Task{n}.PW1=S1exerciseOK{j}.rep{r}.Task{n}.PW1(ID);
+                if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'PW2'))
+                    S1exerciseOK{j}.rep{r}.Task{n}.PW2=S1exerciseOK{j}.rep{r}.Task{n}.PW2(ID);
+                end
+                
+                S1exerciseOK{j}.rep{r}.Task{n}.timeI=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.indexstream_cur=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_cur(ID);
+                
+                %stream EMG
+                clear ID
+                ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.EMG1)==0);
+                S1exerciseOK{j}.rep{r}.Task{n}.EMG1=S1exerciseOK{j}.rep{r}.Task{n}.EMG1(ID);
+                if(isfield(S1exerciseOK{j}.rep{r}.Task{n},'EMG2'))
+                    S1exerciseOK{j}.rep{r}.Task{n}.EMG2=S1exerciseOK{j}.rep{r}.Task{n}.EMG2(ID);
+                end
+                
+                S1exerciseOK{j}.rep{r}.Task{n}.timeEMG=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.indexstream_EMG=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_EMG(ID);
+                
+                
+                %stream angle
+                clear ID
+                ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle)==0);
+                S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle=S1exerciseOK{j}.rep{r}.Task{n}.elbowAngle(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.SEAngle=S1exerciseOK{j}.rep{r}.Task{n}.SEAngle(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.SRAngle=S1exerciseOK{j}.rep{r}.Task{n}.SRAngle(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.time_ang=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS(ID);
+                S1exerciseOK{j}.rep{r}.Task{n}.indexstream_ang=S1exerciseOK{j}.rep{r}.Task{n}.indexstream_ang(ID);
+                
+                
+                %involvement
+                clear ID
+                ID=find(isnan(S1exerciseOK{j}.rep{r}.Task{n}.involvement)==0);
+                if (ID)
+                    S1exerciseOK{j}.rep{r}.Task{n}.involvement=S1exerciseOK{j}.rep{r}.Task{n}.involvement(ID);
+                    S1exerciseOK{j}.rep{r}.Task{n}.time_inv=S1exerciseOK{j}.rep{r}.Task{n}.AbsTimeMS_inv(ID);
+                    
+                else
+                    S1exerciseOK{j}.rep{r}.Task{n}.involvement=NaN;
+                    S1exerciseOK{j}.rep{r}.Task{n}.time_inv=NaN;
+                end
+                
+                
             end
-            
-            
         end
     end
+    %%
+    
+    %figure angle exe 1 (ok solo se 4 task)
+    
+    i_ex=1;
+    
+    
+%     figure
+%     
+%     for n=1:4
+%         switch n
+%             case 1
+%                 subplot(221)
+%             case 2
+%                 subplot(222)
+%             case 3
+%                 subplot(223)
+%             case 4
+%                 subplot(224)
+%         end
+%         
+%         
+%         for r=1:max(size(S1exerciseOK{i_ex}.rep))
+%             if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang)==0)
+%                 hold on
+%                 plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.elbowAngle,'b')
+%                 plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.SEAngle,'r')
+%                 plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.SRAngle,'k')
+%             end
+%         end
+%         legend('elbow','shou elev','shou rot')
+%         xlabel('time [ms]')
+%         ylabel ('angle [°]')
+%         title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
+%     end
+%     
+    
+    % %figure current
+%     figure
+%     %
+%     for n=1:4
+%         switch n
+%             case 1
+%                 subplot(221)
+%             case 2
+%                 subplot(222)
+%             case 3
+%                 subplot(223)
+%             case 4
+%                 subplot(224)
+%         end
+%         
+%         
+%         for r=1:max(size(S1exerciseOK{i_ex}.rep))
+%             if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI)==0)
+%                 hold on
+%                 plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI(1), S1exerciseOK{i_ex}.rep{r}.Task{n}.I1,'b')
+%                 if(isfield(S1exerciseOK{i_ex}.rep{r}.Task{n},'I2'))
+%                     plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.I2,'r')
+%                 end
+%                 
+%             end
+%         end
+%         legend('M1','M2')
+%         xlabel('time [ms]')
+%         ylabel ('current [mA]')
+%         title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
+%     end
+    
+    
+%     %figure EMG
+%     figure
+%     
+%     for n=1:4
+%         switch n
+%             case 1
+%                 subplot(221)
+%             case 2
+%                 subplot(222)
+%             case 3
+%                 subplot(223)
+%             case 4
+%                 subplot(224)
+%         end
+%         
+%         
+%         for r=1:max(size(S1exerciseOK{i_ex}.rep))
+%             if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG)==0)
+%                 hold on
+%                 plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG(1), S1exerciseOK{i_ex}.rep{r}.Task{n}.EMG1,'b')
+%                 if(isfield(S1exerciseOK{i_ex}.rep{r}.Task{n},'EMG2'))
+%                     plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.EMG2,'r')
+%                 end
+%             end
+%             
+%         end
+%         legend('M1','M2')
+%         xlabel('time [ms]')
+%         ylabel ('EMG [\muV]')
+%         title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
+%     end
+else
+    S1exerciseOK=[];
+    
 end
 
 
 
 
-%%
-
-%figure angle exe 1 (ok solo se 4 task)
-
-i_ex=1;
 
 
-figure
-
-for n=1:4
-    switch n
-        case 1
-            subplot(221)
-        case 2
-            subplot(222)
-        case 3
-            subplot(223)
-        case 4
-            subplot(224)
-    end
-    
-    
-    for r=1:max(size(S1exerciseOK{i_ex}.rep))
-        if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang)==0)
-            hold on
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.elbowAngle,'b')
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.SEAngle,'r')
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang - S1exerciseOK{i_ex}.rep{r}.Task{n}.time_ang(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.SRAngle,'k')
-        end
-    end
-    legend('elbow','shou elev','shou rot')
-    xlabel('time [ms]')
-    ylabel ('angle [°]')
-    title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
-end
-
-
-% %figure current
-figure
-%
-for n=1:4
-    switch n
-        case 1
-            subplot(221)
-        case 2
-            subplot(222)
-        case 3
-            subplot(223)
-        case 4
-            subplot(224)
-    end
-    
-    
-    for r=1:max(size(S1exerciseOK{i_ex}.rep))
-        if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI)==0)
-            hold on
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI(1), S1exerciseOK{i_ex}.rep{r}.Task{n}.I1,'b')
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeI(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.I2,'r')
-        end
-    end
-    legend('M1','M2')
-    xlabel('time [ms]')
-    ylabel ('current [mA]')
-    title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
-end
-
-
-%figure EMG
-figure
-
-for n=1:4
-    switch n
-        case 1
-            subplot(221)
-        case 2
-            subplot(222)
-        case 3
-            subplot(223)
-        case 4
-            subplot(224)
-    end
-    
-    
-    for r=1:max(size(S1exerciseOK{i_ex}.rep))
-        if(isempty(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG)==0)
-            hold on
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG(1), S1exerciseOK{i_ex}.rep{r}.Task{n}.EMG1,'b')
-            plot(S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG - S1exerciseOK{i_ex}.rep{r}.Task{n}.timeEMG(1),S1exerciseOK{i_ex}.rep{r}.Task{n}.EMG2,'r')
-        end
-        
-    end
-    legend('M1','M2')
-    xlabel('time [ms]')
-    ylabel ('EMG [\muV]')
-    title(strcat(S1exerciseOK{i_ex}.Parameters.Name,S1exerciseOK{i_ex}.rep{r}.Task{n}.Name),'Fontweight','b')
-end

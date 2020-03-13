@@ -8,8 +8,8 @@ NR_subjects = 1;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{1}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
-% subjects{1}.exe_to_consider{3}.Name = 'get_S1_E3_Name';
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
+subjects{1}.exe_to_consider{3}.Name = 'get_S1_E3_Name';
 subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
 subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 % 
@@ -20,11 +20,11 @@ subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
 
 %% Import Data
 
-cd(userpath)
-cd('DataAnalysis/mfile-git-Retrainer');
+% cd(userpath)
+% cd('DataAnalysis/mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
-cd('../SessionData');
+cd('../Results Outcome');
 addpath(pwd);
 
  

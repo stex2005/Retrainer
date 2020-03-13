@@ -32,11 +32,11 @@ DebugModeIndex = 0;
 
 %% Load MAT-files containing data structure 
 
-cd(userpath)
-cd('DataAnalysis/mfile-git-Retrainer');
+% cd(userpath)
+% cd('../mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
-cd('../SessionData');
+cd('../Results Parsed Data');
 addpath(pwd);
 
 % [FileName,PathName]=uigetfile('*.mat');
@@ -1062,7 +1062,7 @@ for index_session =	1:NR_sessions
     
 end % end for sessions
 
-cd(PathName)
+cd('../Results Outcome');
 
 filename=strcat(FileName{index_subject}(1:end-4),'_Outcomes.mat');
 save(filename, 'Sessions_Outcomes')
