@@ -60,9 +60,9 @@ for index_session=1:NR_sessions
     cd('..'); 
     PathToSave=pwd; 
 
-    fn=fullfile(PathToSave,'Results');
+    fn=fullfile(PathToSave,'Results Parsed Data');
     if(not(exist(fn,'dir')))
-        mkdir(PathToSave,'Results');
+        mkdir(PathToSave,'Results Parsed Data');
     end
     
     cd(fn)

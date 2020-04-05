@@ -23,7 +23,7 @@
 
 ccc
 
-% flags to plot Debug stuff
+% Set these flags to 1 to plot Debug stuff
 
 DebugMode = 0;
 DebugModeInv = 0;
@@ -32,8 +32,6 @@ DebugModeIndex = 0;
 
 %% Load MAT-files containing data structure 
 
-% cd(userpath)
-% cd('../mfile-git-Retrainer');
 currentPath=pwd;
 addpath(currentPath);
 cd('../Results Parsed Data');
@@ -1062,7 +1060,7 @@ for index_session =	1:NR_sessions
     
 end % end for sessions
 
-cd('../Results Outcome');
+cd('../Results Outcome Data');
 
 filename=strcat(FileName{index_subject}(1:end-4),'_Outcomes.mat');
 save(filename, 'Sessions_Outcomes')

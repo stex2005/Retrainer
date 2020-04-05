@@ -8,14 +8,10 @@ NR_subjects = 1;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
-subjects{1}.exe_to_consider{3}.Name = 'get_S1_E3_Name';
-subjects{1}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{1}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-% 
-% subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-% subjects{2}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-% subjects{2}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+
+subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 
 
 %% Import Data
@@ -44,7 +40,6 @@ for index_subject = 1:NR_subjects
     
    
     % Allocate structure
-    
     for index_session=1:NR_sessions
         for index_exe_to_consider = 1:NR_exe_to_consider
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean = nan(1,NR_sessions);
@@ -300,10 +295,10 @@ for index_subject = 1:NR_subjects
             set(gca,'Fontsize',14,'FontWeight','b')
             ylim([-0.5 100.5]);
             xlim([-0.5 28.5]);
-            leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
-            leg.FontSize = 8;
-            leg.Location = 'northeast';
-            leg.FontWeight = 'normal';
+%             leg = legend([plot1 plot2 plot3],'Elbow','Shoulder Elevation','Shoulder Rotation');
+%             leg.FontSize = 8;
+%             leg.Location = 'northeast';
+%             leg.FontWeight = 'normal';
                       
             % Save Figure
             print(gcf, '-dtiffn', strcat(subjects{index_subject}.Name,' ',title_exe,' Outcomes'))

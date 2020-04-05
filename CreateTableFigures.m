@@ -3,28 +3,36 @@
 ccc
 
 %% Define exercises for each patient manually
-%ANKF-015
+% %ANKF-015
+% subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% %ANKF-022
+% subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% %ANKF-023
+% subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{3}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
+% subjects{3}.exe_to_consider{3}.Name = 'get_S1_E5_Name';
+% subjects{3}.exe_to_consider{4}.Name = 'get_S1_E7_Name';
+% % VB-010
+% subjects{4}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% subjects{4}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
+% subjects{4}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
+% % VB-020
+% subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+% subjects{5}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+% %VB-023
+% subjects{6}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
+% %VB-028
+% subjects{7}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
+% subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+
+%SUBJECT 1
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-%ANKF-022
+subjects{1}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+%SUBJECT 2
 subjects{2}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
 subjects{2}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-%ANKF-023
-subjects{3}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{3}.exe_to_consider{2}.Name = 'get_S1_E2_Name';
-subjects{3}.exe_to_consider{3}.Name = 'get_S1_E5_Name';
-subjects{3}.exe_to_consider{4}.Name = 'get_S1_E7_Name';
-% VB-010
-subjects{4}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-subjects{4}.exe_to_consider{2}.Name = 'get_S1_E6_Name';
-subjects{4}.exe_to_consider{3}.Name = 'get_S1_E7_Name';
-% VB-020
-subjects{5}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{5}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
-%VB-023
-subjects{6}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
-%VB-028
-subjects{7}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
-subjects{7}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
+
 
 
 
