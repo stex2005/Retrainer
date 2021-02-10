@@ -1,9 +1,4 @@
 %% Create Figures
-
-% This code parses the data stream and creates a valid MATLAB struct that 
-% contains all the kinematics/emg data for all the sessions of each patient.
-% The struct organizes the sessions in type of exercises, repetitions 
-% and sub-tasks.
 %
 % Inputs:
 % MAT-file: file containing the data structure for one patient, all the
@@ -14,7 +9,7 @@
 % Figures
 %
 % Example:
-% Input: VB-S1-R-0**_allSessions_Outcomes.mat
+% Input: VB-S1-R-0**_allSessions_Outcomes.mat for each subject
 % Output: Figures
 
 %% Clean

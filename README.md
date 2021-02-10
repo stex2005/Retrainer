@@ -8,15 +8,15 @@ To run the stream parser
 - Select all the sessions to be analysed for each patient. Select multiple files in S1/RETRAINER/XXX-S1-R-YYY/Sessions/Combined_SessionData_ZZZ.txt
 - Wait until the program stops.
 
-###Inputs:
+- Inputs:
 txt-files: files containing the data stream for one patient, all the
 sessions. Each file contains a session.
 
-###Outputs:
+- Outputs:
 MAT-file: file containing the data structure for one patient, all the
 sessions.
 
-###Example:
+- Example:
 Input: Combined_SessionData_XXX.txt
 Output: VB-S1-R-0**_allSessions.mat
 
@@ -29,16 +29,16 @@ the outcome measures that are added to the original data structure.
 To compute the outcome measures
 - `Run_Step2_ComputeOutcomeMeasures` (you can choose to open only one patient or more than one)
 
-###Inputs:
+- Inputs:
 MAT-file: file containing the data structure for one patient, all the
 sessions.
 
-###Outputs:
+- Outputs:
 MAT-file: file containing the data structure for one patient, all the
 sessions + the computed outcome measures that are added to the original
 structure.
 
-###Example:
+- Example:
 Input: VB-S1-R-0**_allSessions.mat
 Output: VB-S1-R-0**_allSessions_Outcomes.mat
 
@@ -46,3 +46,11 @@ Output: VB-S1-R-0**_allSessions_Outcomes.mat
 ## Step 3 - Create Figures
 The third step is used to create figures from the previously computed outcome measures. 
 The user can specify in the script the number of subjects to be analyzed.
+
+- `Run_Step3_CreateFigures`
+
+## Step 4 - Create Tables
+The fourth step is used to create tables and figures from the previously computed outcome measures. 
+The user has to select the exercises to be considered for each subject. The code then creates a table for each exercise.
+
+- `Run_Step4_CreateTables`

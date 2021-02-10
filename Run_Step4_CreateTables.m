@@ -1,7 +1,32 @@
-%% CCC
+%% Create Figures
+%
+% Inputs:
+% MAT-file: file containing the data structure for one patient, all the
+% sessions + the computed outcome measures that are added to the original
+% structure.
+%
+% Outputs:
+% Figures
+%
+% Example:
+% Input: VB-S1-R-0**_allSessions_Outcomes.mat for each subject
+% Output: Tables and Figures
 
-ccc
+%% Clean
+close all
+clear all
+clc
 
+%% Dependencies
+%Adding to path
+currentPath=pwd;
+addpath(currentPath);
+% Functions path
+path = [currentPath '/functions'];
+addpath(path);
+% Results path
+cd('../Results Outcome Data');
+addpath(pwd);
 
 %% Define exercises for each patient manually
 %ANKF-015
@@ -59,8 +84,6 @@ subjects{21}.exe_to_consider{2}.Name = 'get_S1_E7_Name';
 %VB-114
 subjects{22}.exe_to_consider{1}.Name = 'get_S1_E6_Name';
 
-
-
 %% Import Data
 
 % cd(userpath)
@@ -70,64 +93,15 @@ addpath(currentPath);
 cd('../Results Outcome Data');
 addpath(pwd);
 
- 
- %% Allocate Excel Table
- 
+% Get name
 testname=inputdlg({'New Filename: '});
-% xlsname = strcat(testname{1});
-% xlsname = strcat(xlsname,'.xlsx');
-% xlsname = strcat(pwd,'\',xlsname);
-% 
-% s1e1Name = strcat(testname{1}, '_get_S1_E1_Name');
-% s1e1Name = strcat(s1e1Name,'.xlsx');
-% s1e1Name = strcat(pwd,'\',s1e1Name);
-% 
-% s1e6Name = strcat(testname{1}, '_get_S1_E6_Name');
-% s1e6Name = strcat(s1e6Name,'.xlsx');
-% s1e6Name = strcat(pwd,'\',s1e6Name);
-% 
-% s1e7Name = strcat(testname{1}, '_get_S1_E7_Name');
-% s1e7Name = strcat(s1e7Name,'.xlsx');
-% s1e7Name = strcat(pwd,'\',s1e7Name);
-% 
-% if exist(xlsname, 'file')
-%     delete(xlsname);
-% end
-% 
-% if exist(s1e1Name, 'file')
-%     delete(s1e1Name);
-% end
-% 
-% if exist(s1e6Name, 'file')
-%     delete(s1e6Name);
-% end
-% 
-% if exist(s1e7Name, 'file')
-%     delete(s1e7Name);
-% end
-% heading = { 'Patient','Exercise','# Sessions', ...
-%             'Movement Time T0','Movement Time T1','Movement Time p-value', ...
-%             'Smoothness T0','Smoothness T1','Smoothness p-value', ...
-%             'ROM Elbow T0','ROM Elbow T1','ROM Elbow p-value', ...
-%             'ROM SE T0','ROM SE T1','ROM SE p-value', ...
-%             'ROM SR T0','ROM SR T1','ROM SR p-value', ...
-%             'EMG-triggered tasks %', ...
-%             'Involved tasks %', ...
-%             'Involved tasks % recomputed', ...
-%             'Success rate %' };
-% [~,~] = xlswrite(xlsname,heading);
-% [~,~] = xlswrite(s1e1Name,heading);
-% [~,~] = xlswrite(s1e6Name,heading);
-% [STATUS,MESSAGE] = xlswrite(s1e7Name,heading);
 
-%% For each subject
-
-% [FileName,PathName]=uigetfile('*.mat');
+% For more than one subject use this line:
 [FileName,PathName,FilterIndex] = uigetfile('*.mat','MultiSelect','on');
 NR_subjects=max(size(FileName));
 
+%% For each subject
 
-% for each of the selected files
 for index_subject = 1:NR_subjects
     
     % load the file 
@@ -143,7 +117,7 @@ for index_subject = 1:NR_subjects
     NR_exe_to_consider = max(size(subjects{index_subject}.exe_to_consider));
     
    
-    % Allocate structure
+    %% Allocate structure
        
 	% for each of the sessions
     for index_session=1:NR_sessions
@@ -194,11 +168,8 @@ for index_subject = 1:NR_subjects
                 
                 subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Muscles = strings(2,NR_sessions);
                 
-                
         end  
     end
-    
-    
     
     %for each of the sessions
     for index_session=1:NR_sessions
@@ -210,7 +181,6 @@ for index_subject = 1:NR_subjects
         
         
         % First run to isolate and sort exercises to be considered
-        
         for index_exe = 1:NR_exe 
             for index_exe_to_consider = 1:NR_exe_to_consider
                 if Sessions_Outcomes{index_session}.Exercises{index_exe}.Parameters.Name == subjects{index_subject}.exe_to_consider{index_exe_to_consider}.Name
@@ -220,8 +190,7 @@ for index_subject = 1:NR_subjects
         end
         
                        
-        % Create Mat Structure with outcome measures
-                
+        % Create Mat Structure with outcome measures     
         for index_exe_to_consider = 1:NR_exe_to_consider
             if not(isnan(index_exe_OK(index_exe_to_consider)))
                         subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_session)= nanmean(Sessions_Outcomes{index_session}.Exercises{index_exe_OK(index_exe_to_consider)}.MT);
@@ -330,7 +299,7 @@ for index_subject = 1:NR_subjects
         
         %% Table
         
-        %Movement Time
+        % Movement Time
         MT_T0           = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.first),'%.1f'),')') ;
         MT_T1           = strcat(num2str(nanmean(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.1f'),' (',num2str(nanstd(subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.last),'%.1f'),')') ;
         if subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.p >= 0.001
@@ -434,13 +403,13 @@ for index_subject = 1:NR_subjects
                             Success
                             });   
                         
-       %% Plots
-%{
+%% ROM and Kinematics Plots
+
 %         title_fig = sprintf('%s - Exercise %d: %s',subjects{index_subject}.Name,index_exe_to_consider,title_exe);
 %         set(gcf,'Name',title_fig); % 'Position', get(0, 'Screensize'),'Name',title_fig,
         
         
-        % MT
+% MT
 %         subplot(1,3,1)
         figure
         plot(index_all,subjects{index_subject}.exe_to_consider{index_exe_to_consider}.MT.Mean(index_all),'ok','MarkerFaceColor','k','MarkerSize',7)
@@ -529,20 +498,16 @@ for index_subject = 1:NR_subjects
         print(gcf, '-dtiffn', title_fig)
         savefig(title_fig)
 
-   %}     
+   %}    
         
     end
 end
 
 filename='subjects.mat';
 save(filename, 'subjects')
-
-    
-    
       
-    
-        
-    %% Plots
+%% EMG and Involvement Plots
+
   %{  
 %     title_fig = sprintf('Patient %s: Movement Time',subjects{index_subject}.Name);
 %     figure_MT = figure(1); 
