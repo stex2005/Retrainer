@@ -1,5 +1,5 @@
 %% Stream Parser
-
+%
 % This code parses the data stream and creates a valid MATLAB struct that 
 % contains all the kinematics/emg data for all the sessions of each patient.
 % The struct organizes the sessions in type of exercises, repetitions 
@@ -122,16 +122,17 @@ for index_session=1:NR_sessions
     % Clear variables
     clearvars -except Sessions PathName fn currentPath delimiter parse_S1 parse_RFID FileName NR_sessions index_session
     
-    
 end
 
 %%save the final structure
 if(exist('Sessions'))
+    % Enter path
     cd(fn)
-    filename=strcat(FileName{1}(31:end-4),'_allSessions_Test.mat');
+    filename=strcat(FileName{1}(31:end-4),'_allSessions.mat');
     save(filename, 'Sessions')
 else
     disp('No Session to be saved')
 end
 
+% Exit path
 cd(currentPath)

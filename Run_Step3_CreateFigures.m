@@ -19,7 +19,7 @@ clc
 
 %% Initialization
 
-NR_subjects = 1;
+NR_subjects = 2;
 
 % Define exercises for each patient manually
 subjects{1}.exe_to_consider{1}.Name = 'get_S1_E1_Name';
